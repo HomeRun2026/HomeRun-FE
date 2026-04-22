@@ -9,6 +9,7 @@ import HomeOut from "../../assets/images/Home_out.svg";
 import MypageIn from "../../assets/images/Mypage_in.svg";
 import MypageOut from "../../assets/images/Mypage_out.svg";
 import BellIcon from "../../assets/images/icon_bell.svg";
+import BellNoneIcon from "../../assets/images/icon_bell_none.svg";
 import HomerunLogo from "../../assets/images/homerun_logo.svg";
 import { colors, layout, typography } from "../theme";
 
@@ -37,12 +38,13 @@ const tabs = [
   },
 ];
 
-export function HomeScreen() {
+export function HomeScreen({ notificationCount = 0 }) {
   const [activeTab, setActiveTab] = useState("home");
   const activeTitle = useMemo(
     () => tabs.find((tab) => tab.key === activeTab)?.label,
     [activeTab]
   );
+  const HeaderBellIcon = notificationCount > 0 ? BellIcon : BellNoneIcon;
 
   return (
     <View style={styles.screen}>
@@ -60,7 +62,7 @@ export function HomeScreen() {
                   hitSlop={12}
                   style={styles.bellButton}
                 >
-                  <BellIcon height={31} width={36} />
+                  <HeaderBellIcon height={31} width={36} />
                 </Pressable>
               </View>
             </>
