@@ -1,6 +1,9 @@
 import React from "react";
 import {
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -26,49 +29,61 @@ export function SignupScreen({ onBackPress }) {
         <Text style={styles.title}>회원가입</Text>
       </View>
 
-      <View style={styles.content}>
-        <View style={styles.emailGroup}>
-          <View style={styles.row}>
-            <SignupInput
-              autoCapitalize="none"
-              autoComplete="email"
-              keyboardType="email-address"
-              placeholder="이메일 *"
-              style={styles.flexInput}
-            />
-            <SideButton>인증</SideButton>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboardContainer}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          style={styles.scroller}
+        >
+          <View style={styles.content}>
+            <View style={styles.emailGroup}>
+              <View style={styles.row}>
+                <SignupInput
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  keyboardType="email-address"
+                  placeholder="이메일 *"
+                  style={styles.flexInput}
+                />
+                <SideButton>인증</SideButton>
+              </View>
+              <View style={styles.row}>
+                <SignupInput
+                  keyboardType="number-pad"
+                  placeholder="인증번호 입력 *"
+                  style={styles.flexInput}
+                />
+                <SideButton>확인</SideButton>
+              </View>
+            </View>
+
+            <View style={styles.passwordGroup}>
+              <SignupInput
+                autoCapitalize="none"
+                autoComplete="password"
+                placeholder="비밀번호 *"
+                secureTextEntry
+              />
+              <SignupInput
+                autoCapitalize="none"
+                autoComplete="password"
+                placeholder="비밀번호 확인 *"
+                secureTextEntry
+              />
+            </View>
+
+            <Text style={styles.helper}>
+              (영문 대소 문자/숫자/특수 문자 중 2가지 이상 조합, 8자-16자)
+            </Text>
+
+            <SignupInput placeholder="닉네임" style={styles.nicknameInput} />
           </View>
-          <View style={styles.row}>
-            <SignupInput
-              keyboardType="number-pad"
-              placeholder="인증번호 입력 *"
-              style={styles.flexInput}
-            />
-            <SideButton>확인</SideButton>
-          </View>
-        </View>
-
-        <View style={styles.passwordGroup}>
-          <SignupInput
-            autoCapitalize="none"
-            autoComplete="password"
-            placeholder="비밀번호 *"
-            secureTextEntry
-          />
-          <SignupInput
-            autoCapitalize="none"
-            autoComplete="password"
-            placeholder="비밀번호 확인 *"
-            secureTextEntry
-          />
-        </View>
-
-        <Text style={styles.helper}>
-          (영문 대소 문자/숫자/특수 문자 중 2가지 이상 조합, 8자-16자)
-        </Text>
-
-        <SignupInput placeholder="닉네임" style={styles.nicknameInput} />
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <View style={styles.footer}>
         <PrimaryButton style={styles.nextButton} textStyle={styles.nextText}>
@@ -98,6 +113,9 @@ function SideButton({ children }) {
 }
 
 const styles = StyleSheet.create({
+  keyboardContainer: {
+    flex: 1,
+  },
   statusSpacer: {
     height: 40,
     backgroundColor: colors.white,
@@ -126,10 +144,17 @@ const styles = StyleSheet.create({
     ...typography.head01Sb,
     color: colors.black,
   },
+  scrollContent: {
+    flexGrow: 1,
+  },
+  scroller: {
+    flex: 1,
+  },
   content: {
     flex: 1,
     paddingHorizontal: layout.screenMargin,
     paddingTop: 24,
+    paddingBottom: 24,
   },
   emailGroup: {
     height: 116,
