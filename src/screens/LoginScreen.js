@@ -10,8 +10,11 @@ import {
 import HomerunLogo from "../../assets/images/homerun_logo.svg";
 import { colors, layout, typography } from "../theme";
 
-export function LoginScreen({ onSignupPress }) {
+export function LoginScreen({ onLoginPress, onSignupPress }) {
   const [remember, setRemember] = useState(false);
+  const handleLoginPress = () => {
+    onLoginPress?.();
+  };
   const handleSignupPress = () => {
     onSignupPress?.();
   };
@@ -39,7 +42,9 @@ export function LoginScreen({ onSignupPress }) {
             placeholder="비밀번호"
             secureTextEntry
           />
-          <PrimaryButton style={styles.loginButton}>로그인</PrimaryButton>
+          <PrimaryButton onPress={handleLoginPress} style={styles.loginButton}>
+            로그인
+          </PrimaryButton>
         </View>
 
         <View style={styles.options}>

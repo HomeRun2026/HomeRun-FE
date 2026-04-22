@@ -2,6 +2,7 @@ export { AccountInfoScreen } from "./AccountInfoScreen";
 export { ChangePasswordScreen } from "./ChangePasswordScreen";
 export { DeleteAccountScreen } from "./DeleteAccountScreen";
 export { FindPasswordScreen } from "./FindPasswordScreen";
+export { HomeScreen } from "./HomeScreen";
 export { InquiryScreen } from "./InquiryScreen";
 export { LoginScreen } from "./LoginScreen";
 export { MyPageScreen } from "./MyPageScreen";
