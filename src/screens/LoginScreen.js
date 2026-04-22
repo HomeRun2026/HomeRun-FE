@@ -10,13 +10,20 @@ import {
 import HomerunLogo from "../../assets/images/homerun_logo.svg";
 import { colors, layout, typography } from "../theme";
 
-export function LoginScreen({ onLoginPress, onSignupPress }) {
+export function LoginScreen({
+  onLoginPress,
+  onSignupPress,
+  onFindPasswordPress,
+}) {
   const [remember, setRemember] = useState(false);
   const handleLoginPress = () => {
     onLoginPress?.();
   };
   const handleSignupPress = () => {
     onSignupPress?.();
+  };
+  const handleFindPasswordPress = () => {
+    onFindPasswordPress?.();
   };
 
   return (
@@ -71,6 +78,7 @@ export function LoginScreen({ onLoginPress, onSignupPress }) {
             <Pressable
               accessibilityRole="button"
               hitSlop={12}
+              onPress={handleFindPasswordPress}
               style={styles.linkButton}
             >
               <Text style={styles.optionText}>비밀번호 찾기</Text>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
@@ -11,6 +11,7 @@ import MypageOut from "../../assets/images/Mypage_out.svg";
 import BellIcon from "../../assets/images/icon_bell.svg";
 import BellNoneIcon from "../../assets/images/icon_bell_none.svg";
 import HomerunLogo from "../../assets/images/homerun_logo.svg";
+import { MyPageScreen } from "./MyPageScreen";
 import { colors, layout, typography } from "../theme";
 
 const homeBackground = "#FCFDFE";
@@ -38,12 +39,12 @@ const tabs = [
   },
 ];
 
-export function HomeScreen({ notificationCount = 0 }) {
-  const [activeTab, setActiveTab] = useState("home");
-  const activeTitle = useMemo(
-    () => tabs.find((tab) => tab.key === activeTab)?.label,
-    [activeTab]
-  );
+export function HomeScreen({
+  notificationCount = 0,
+  initialTab = "home",
+  onOpenAccountInfo,
+}) {
+  const [activeTab, setActiveTab] = useState(initialTab);
   const HeaderBellIcon = notificationCount > 0 ? BellIcon : BellNoneIcon;
 
   return (
@@ -66,9 +67,11 @@ export function HomeScreen({ notificationCount = 0 }) {
                 </Pressable>
               </View>
             </>
+          ) : activeTab === "myPage" ? (
+            <MyPageScreen embedded onProfilePress={onOpenAccountInfo} />
           ) : (
             <View style={styles.placeholder}>
-              <Text style={styles.placeholderTitle}>{activeTitle}</Text>
+              <Text style={styles.placeholderTitle}>캐릭터</Text>
             </View>
           )}
         </View>

@@ -1,7 +1,7 @@
 export { AccountInfoScreen } from "./AccountInfoScreen";
 export { ChangePasswordScreen } from "./ChangePasswordScreen";
 export { DeleteAccountScreen } from "./DeleteAccountScreen";
-export { FindPasswordScreen } from "./FindPasswordScreen";
+export { FindEmailPasswordScreen } from "./FindEmailPasswordScreen";
 export { HomeScreen } from "./HomeScreen";
 export { InquiryScreen } from "./InquiryScreen";
 export { LoginScreen } from "./LoginScreen";
@@ -9,5 +9,6 @@ export { MyPageScreen } from "./MyPageScreen";
 export { NoticesScreen } from "./NoticesScreen";
 export { NotificationsScreen } from "./NotificationsScreen";
 export { SignupScreen } from "./SignupScreen";
+export { SignupCompleteScreen } from "./SignupCompleteScreen";
 export { TermsAgreementScreen } from "./TermsAgreementScreen";
 export { TermsOfServiceScreen } from "./TermsOfServiceScreen";

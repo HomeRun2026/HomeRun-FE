@@ -1,4 +1,5 @@
-import React from "react";
+//이메일/비밀번호 찾기 화면
+import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -9,11 +10,15 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { Feather } from "@expo/vector-icons";
 
 import { AppScreen, PrimaryButton } from "../components";
 import { colors, layout, typography } from "../theme";
 
-export function SignupScreen({ onBackPress, onNextPress }) {
+export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showNewPasswordConfirm, setShowNewPasswordConfirm] = useState(false);
+
   return (
     <AppScreen>
       <View style={styles.statusSpacer} />
@@ -24,9 +29,9 @@ export function SignupScreen({ onBackPress, onNextPress }) {
           onPress={onBackPress}
           style={styles.backButton}
         >
-          <Text style={styles.backIcon}>‹</Text>
+          <Text style={styles.backIcon}>{"<"}</Text>
         </Pressable>
-        <Text style={styles.title}>회원가입</Text>
+        <Text style={styles.title}>비밀번호 찾기</Text>
       </View>
 
       <KeyboardAvoidingView
@@ -40,21 +45,22 @@ export function SignupScreen({ onBackPress, onNextPress }) {
           style={styles.scroller}
         >
           <View style={styles.content}>
-            <View style={styles.emailGroup}>
+            <View style={styles.fieldGroup}>
               <View style={styles.row}>
-                <SignupInput
+                <FieldInput
                   autoCapitalize="none"
                   autoComplete="email"
                   keyboardType="email-address"
-                  placeholder="이메일 *"
+                  placeholder="이메일"
                   style={styles.flexInput}
                 />
                 <SideButton>인증</SideButton>
               </View>
+
               <View style={styles.row}>
-                <SignupInput
+                <FieldInput
                   keyboardType="number-pad"
-                  placeholder="인증번호 입력 *"
+                  placeholder="인증번호 입력"
                   style={styles.flexInput}
                 />
                 <SideButton>확인</SideButton>
@@ -62,49 +68,65 @@ export function SignupScreen({ onBackPress, onNextPress }) {
             </View>
 
             <View style={styles.passwordGroup}>
-              <SignupInput
-                autoCapitalize="none"
-                autoComplete="password"
-                placeholder="비밀번호 *"
-                secureTextEntry
+              <PasswordInput
+                placeholder="새 비밀번호"
+                secureTextEntry={!showNewPassword}
+                onToggleVisibility={() =>
+                  setShowNewPassword((value) => !value)
+                }
               />
-              <SignupInput
-                autoCapitalize="none"
-                autoComplete="password"
-                placeholder="비밀번호 확인 *"
-                secureTextEntry
+              <PasswordInput
+                placeholder="새 비밀번호 확인"
+                secureTextEntry={!showNewPasswordConfirm}
+                onToggleVisibility={() =>
+                  setShowNewPasswordConfirm((value) => !value)
+                }
               />
             </View>
 
             <Text style={styles.helper}>
-              (영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 8자-16자)
+              (영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 8자~16자)
             </Text>
-
-            <SignupInput placeholder="닉네임" style={styles.nicknameInput} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
 
       <View style={styles.footer}>
-        <PrimaryButton
-          onPress={onNextPress}
-          style={styles.nextButton}
-          textStyle={styles.nextText}
-        >
-          다음
+        <PrimaryButton onPress={onConfirmPress} style={styles.confirmButton}>
+          확인
         </PrimaryButton>
       </View>
     </AppScreen>
   );
 }
 
-function SignupInput({ style, ...props }) {
+function FieldInput({ style, ...props }) {
   return (
     <TextInput
       placeholderTextColor={colors.gray06}
       style={[styles.input, style]}
       {...props}
     />
+  );
+}
+
+function PasswordInput({ onToggleVisibility, style, ...props }) {
+  return (
+    <View style={styles.passwordInputWrap}>
+      <TextInput
+        placeholderTextColor={colors.gray06}
+        style={[styles.input, styles.passwordInput, style]}
+        {...props}
+      />
+      <Pressable
+        accessibilityRole="button"
+        hitSlop={8}
+        onPress={onToggleVisibility}
+        style={styles.eyeButton}
+      >
+        <Feather color="#CDD7E1" name="eye" size={22} />
+      </Pressable>
+    </View>
   );
 }
 
@@ -125,7 +147,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   header: {
-    height: 40,
+    height: 76,
     paddingHorizontal: layout.screenMargin,
     flexDirection: "row",
     alignItems: "center",
@@ -134,88 +156,98 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   backButton: {
-    width: 28,
-    height: 40,
+    width: 32,
+    height: 44,
     justifyContent: "center",
   },
   backIcon: {
     color: colors.gray07,
-    fontSize: 30,
-    fontWeight: "400",
-    lineHeight: 34,
+    fontSize: 38,
+    lineHeight: 38,
+    fontWeight: "300",
   },
   title: {
+    marginLeft: 8,
     ...typography.head01Sb,
     color: colors.black,
-  },
-  scrollContent: {
-    flexGrow: 1,
   },
   scroller: {
     flex: 1,
   },
+  scrollContent: {
+    flexGrow: 1,
+  },
   content: {
     flex: 1,
-    paddingHorizontal: layout.screenMargin,
-    paddingTop: 24,
-    paddingBottom: 24,
+    paddingHorizontal: 20,
+    paddingTop: 30,
   },
-  emailGroup: {
-    height: 116,
-    gap: 8,
+  fieldGroup: {
+    gap: 12,
   },
   row: {
-    flex: 1,
     flexDirection: "row",
-    gap: 8,
+    alignItems: "center",
+    gap: 10,
   },
   flexInput: {
     flex: 1,
   },
   input: {
-    height: 54,
-    paddingHorizontal: 16,
+    height: 68,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.gray04,
-    borderRadius: 8,
-    backgroundColor: colors.gray02,
+    backgroundColor: colors.gray03,
+    paddingHorizontal: 20,
     color: colors.gray09,
-    ...typography.body01Sb,
+    ...typography.head01Sb,
+    fontWeight: "500",
   },
   sideButton: {
-    width: 76,
-    height: 54,
+    width: 106,
+    height: 68,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.gray04,
+    backgroundColor: colors.gray04,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 8,
-    backgroundColor: colors.gray04,
   },
   sideButtonText: {
-    ...typography.body02M,
+    ...typography.head01Sb,
     color: colors.gray07,
+    fontWeight: "500",
   },
   passwordGroup: {
-    marginTop: 32,
-    gap: 8,
+    marginTop: 58,
+    gap: 12,
   },
+  passwordInputWrap: {
+    justifyContent: "center",
+  },
+  passwordInput: {
+    paddingRight: 58,
+  },
+  eyeButton: {
+  position: "absolute",
+  right: 18,
+  width: 28,
+  height: 28,
+  alignItems: "center",
+  justifyContent: "center",
+},
   helper: {
-    marginTop: 8,
-    ...typography.caption02M,
-    color: colors.gray07,
-  },
-  nicknameInput: {
-    marginTop: 32,
+    marginTop: 14,
+    ...typography.body02M,
+    color: colors.gray06,
   },
   footer: {
-    paddingHorizontal: layout.screenMargin,
-    paddingBottom: 64,
+    paddingHorizontal: 20,
+    paddingBottom: 62,
   },
-  nextButton: {
-    height: 48,
-    borderRadius: 24,
-  },
-  nextText: {
-    ...typography.body01Sb,
-    color: colors.white,
+  confirmButton: {
+    height: 68,
+    borderRadius: 34,
   },
 });
