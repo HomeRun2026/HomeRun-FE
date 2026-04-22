@@ -208,14 +208,14 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 16,
   },
   tabItem: {
-    width: 62,
-    minHeight: 61,
+    width: 80,
+    flexDirection: "column",
     alignItems: "center",
-    justifyContent: "flex-start",
+    gap: 2,
+    flexShrink: 0,
   },
   tabLabel: {
     ...typography.caption02M,
-    marginTop: 4,
     color: colors.gray07,
     textAlign: "center",
   },
