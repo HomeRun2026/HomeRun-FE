@@ -1,7 +1,140 @@
 import React from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { PlaceholderScreen } from "../components";
+import { AppScreen, Header } from "../components";
 
-export function NoticesScreen() {
-  return <PlaceholderScreen title="공지사항" />;
+export const DEFAULT_NOTICE_ITEMS = [
+  {
+    id: "notice-2026-04-08-maintenance",
+    title: "HomeRun 서비스 점검 및 기능 개선 안내",
+    dateText: "26.04.08",
+    viewCount: 45,
+    author: "홈런운영진",
+    content: `안녕하세요, HomeRun입니다.
+보다 안정적인 서비스 제공과 커뮤니티 환경 개선을 위해
+아래와 같이 점검을 진행할 예정입니다.
+회원 여러분의 너른 양해 부탁드리며, 아래 점검 시간 동안
+일부 기능 이용이 제한될 수 있습니다.
+
+🔧 점검 안내
+점검 일시: 2025년 7월 31일(목) 오전 4시 ~ 오전 7시
+영향 범위: 전체 서비스
+
+🛠 주요 점검 내용
+.
+
+📝 유의사항
+점검 시간 중 서비스 접속이 일시 중단될 수 있습니다.
+앱 사용자는 최신 버전으로 업데이트를 권장드립니다.
+이용 중 불편하셨던 사항은 [문의하기] 메뉴를 통해 접수해 주세요.
+더 나은 공연 커뮤니티 경험을 위해 앞으로도 HomeRun은 꾸준히 개선해 나가겠습니다.
+
+이용해 주셔서 감사합니다.`,
+  },
+  {
+    id: "notice-2026-04-08-update-01",
+    title: "어쩌구 버전 업데이트 공지",
+    dateText: "26.04.08",
+    viewCount: 45,
+    author: "홈런운영진",
+    content: "업데이트 관련 공지 본문 예시입니다.",
+  },
+  {
+    id: "notice-2026-04-08-update-02",
+    title: "어쩌구 버전 업데이트 공지",
+    dateText: "26.04.08",
+    viewCount: 45,
+    author: "홈런운영진",
+    content: "업데이트 관련 공지 본문 예시입니다.",
+  },
+  {
+    id: "notice-2026-04-08-update-03",
+    title: "어쩌구 버전 업데이트 공지",
+    dateText: "26.04.08",
+    viewCount: 45,
+    author: "홈런운영진",
+    content: "업데이트 관련 공지 본문 예시입니다.",
+  },
+];
+
+/**
+ * 공지사항 목록 페이지
+ * - notices: API 응답을 화면 모델로 변환해 주입할 수 있도록 분리
+ * - onNoticePress: 공지 클릭 시 상세 페이지 라우팅에 사용
+ */
+export function NoticesScreen({
+  notices = DEFAULT_NOTICE_ITEMS,
+  onBackPress,
+  onNoticePress,
+}) {
+  return (
+    <AppScreen>
+      <View style={styles.container}>
+        <Header type="back" title="공지사항" onBackPress={onBackPress} />
+
+        <View style={styles.list}>
+          {notices.map((notice) => (
+            <Pressable
+              key={notice.id}
+              onPress={() => onNoticePress?.(notice)}
+              style={styles.card}
+            >
+              <Text style={styles.cardTitle}>{notice.title}</Text>
+              <View style={styles.metaRow}>
+                <Text style={styles.metaText}>{notice.dateText}</Text>
+                <Text style={styles.metaDivider}>|</Text>
+                <Text style={styles.metaText}>조회수 {notice.viewCount}</Text>
+                <Text style={styles.metaDivider}>|</Text>
+                <Text style={styles.metaText}>{notice.author}</Text>
+              </View>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+    </AppScreen>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F4F7FA",
+  },
+  list: {
+    paddingHorizontal: 18,
+    paddingTop: 18,
+    gap: 12,
+  },
+  card: {
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#DFE7ED",
+    backgroundColor: "#F8FBFD",
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+  },
+  cardTitle: {
+    fontSize: 18,
+    lineHeight: 26,
+    fontWeight: "700",
+    color: "#4A525A",
+  },
+  metaRow: {
+    marginTop: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  metaText: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "500",
+    color: "#B3BFCA",
+  },
+  metaDivider: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "500",
+    color: "#D1D9E1",
+  },
+});

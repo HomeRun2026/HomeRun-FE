@@ -5,6 +5,7 @@ export { FindEmailPasswordScreen } from "./FindEmailPasswordScreen";
 export { HomeScreen } from "./HomeScreen";
 export { InquiryScreen } from "./InquiryScreen";
 export { LoginScreen } from "./LoginScreen";
+export { NoticeDetailScreen } from "./NoticeDetailScreen";
 export { MyPageScreen } from "./MyPageScreen";
 export { NoticesScreen } from "./NoticesScreen";
 export { NotificationsScreen } from "./NotificationsScreen";

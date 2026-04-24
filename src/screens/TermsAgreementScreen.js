@@ -1,21 +1,19 @@
 import React, { useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { AppScreen, PrimaryButton } from "../components";
+import { AppScreen, Header, PrimaryButton } from "../components";
 import { colors, layout, typography } from "../theme";
 
 const TERMS = [
   {
     id: "service",
     title: "서비스 이용약관 동의 (필수)",
-    description:
-      "서비스 이용약관 동의 여기다 작성",
+    description: "서비스 이용약관 동의 여기에 작성",
   },
   {
     id: "privacy",
     title: "개인정보 수집 및 이용 동의 (필수)",
-    description:
-      "개인정보 수집 및 이용 동의 여기다 작성",
+    description: "개인정보 수집 및 이용 동의 여기에 작성",
   },
 ];
 
@@ -64,21 +62,11 @@ export function TermsAgreementScreen({ onBackPress, onConfirmPress }) {
 
   return (
     <AppScreen>
-      <View style={styles.header}>
-        <Pressable
-          accessibilityLabel="뒤로가기"
-          hitSlop={8}
-          onPress={onBackPress}
-          style={styles.backButton}
-        >
-          <Text style={styles.backIcon}>‹</Text>
-        </Pressable>
-        <Text style={styles.headerTitle}>회원가입</Text>
-      </View>
+      <Header type="back" title="회원가입" onBackPress={onBackPress} />
 
       <View style={styles.container}>
         <View>
-          <Text style={styles.title}>약관에 동의해 주세요.</Text>
+          <Text style={styles.title}>약관에 동의해 주세요</Text>
 
           <View style={styles.termsList}>
             {TERMS.map((term) => {
@@ -100,12 +88,12 @@ export function TermsAgreementScreen({ onBackPress, onConfirmPress }) {
 
                     <Pressable
                       accessibilityRole="button"
-                      accessibilityLabel={`${term.title} ${expanded ? "접기" : "펼치기"}`}
+                      accessibilityLabel={`${term.title} ${expanded ? "닫기" : "펼치기"}`}
                       onPress={() => toggleExpand(term.id)}
                       style={styles.termRowButton}
                     >
                       <Text style={styles.termTitle}>{term.title}</Text>
-                      <Text style={styles.expandIcon}>{expanded ? "⌃" : "⌄"}</Text>
+                      <Text style={styles.expandIcon}>{expanded ? "▲" : "▼"}</Text>
                     </Pressable>
                   </View>
 
@@ -143,30 +131,6 @@ export function TermsAgreementScreen({ onBackPress, onConfirmPress }) {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    height: 56,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: layout.screenMargin,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray04,
-    backgroundColor: colors.white,
-  },
-  backButton: {
-    width: 28,
-    height: 40,
-    justifyContent: "center",
-  },
-  backIcon: {
-    fontSize: 35,
-    lineHeight: 35,
-    color: colors.gray07,
-    fontWeight: "400",
-  },
-  headerTitle: {
-    ...typography.head01Sb,
-    color: colors.gray09,
-  },
   container: {
     flex: 1,
     paddingHorizontal: layout.screenMargin,

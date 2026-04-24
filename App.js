@@ -6,6 +6,9 @@ import {
   FindEmailPasswordScreen,
   HomeScreen,
   LoginScreen,
+  NoticeDetailScreen,
+  NoticesScreen,
+  NotificationsScreen,
   SignupCompleteScreen,
   SignupScreen,
   TermsAgreementScreen,
@@ -13,6 +16,7 @@ import {
 
 export default function App() {
   const [screen, setScreen] = useState("login");
+  const [selectedNotice, setSelectedNotice] = useState(null);
 
   if (screen === "signup") {
     return (
@@ -35,6 +39,7 @@ export default function App() {
   if (screen === "signupComplete") {
     return (
       <SignupCompleteScreen
+        onBackPress={() => setScreen("termsAgreement")}
         onHomePress={() => setScreen("home")}
         onLoginPress={() => setScreen("login")}
       />
@@ -42,7 +47,13 @@ export default function App() {
   }
 
   if (screen === "home") {
-    return <HomeScreen onOpenAccountInfo={() => setScreen("accountInfo")} />;
+    return (
+      <HomeScreen
+        onOpenAccountInfo={() => setScreen("accountInfo")}
+        onOpenNotices={() => setScreen("noticesHomeMyPage")}
+        onOpenNotifications={() => setScreen("notificationsHome")}
+      />
+    );
   }
 
   if (screen === "homeMyPage") {
@@ -50,8 +61,39 @@ export default function App() {
       <HomeScreen
         initialTab="myPage"
         onOpenAccountInfo={() => setScreen("accountInfo")}
+        onOpenNotices={() => setScreen("noticesHomeMyPage")}
+        onOpenNotifications={() => setScreen("notificationsHomeMyPage")}
       />
     );
+  }
+
+  if (screen === "noticesHomeMyPage") {
+    return (
+      <NoticesScreen
+        onBackPress={() => setScreen("homeMyPage")}
+        onNoticePress={(notice) => {
+          setSelectedNotice(notice);
+          setScreen("noticeDetailHomeMyPage");
+        }}
+      />
+    );
+  }
+
+  if (screen === "noticeDetailHomeMyPage") {
+    return (
+      <NoticeDetailScreen
+        notice={selectedNotice}
+        onBackPress={() => setScreen("noticesHomeMyPage")}
+      />
+    );
+  }
+
+  if (screen === "notificationsHome") {
+    return <NotificationsScreen onBackPress={() => setScreen("home")} />;
+  }
+
+  if (screen === "notificationsHomeMyPage") {
+    return <NotificationsScreen onBackPress={() => setScreen("homeMyPage")} />;
   }
 
   if (screen === "accountInfo") {

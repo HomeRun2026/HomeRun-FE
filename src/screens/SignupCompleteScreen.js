@@ -1,20 +1,21 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { AppScreen, PrimaryButton } from "../components";
+import { AppScreen, Header, PrimaryButton } from "../components";
 import { colors, layout, typography } from "../theme";
 
-export function SignupCompleteScreen({ onHomePress, onLoginPress }) {
+export function SignupCompleteScreen({ onBackPress, onHomePress, onLoginPress }) {
   return (
     <AppScreen>
-      <View style={styles.statusSpacer} />
+      <Header type="back" title="회원가입" onBackPress={onBackPress} />
+
       <View style={styles.container}>
         <View style={styles.content}>
           <Text style={styles.title}>회원가입이 완료되었어요!</Text>
           <Text style={styles.description}>
-            홈런에 오신 걸 환영합니다.
+            홈런이 당신을 기다리고 있습니다.
             {"\n"}
-            지금 바로 다양한 서비스를 이용해 보세요!
+            지금 바로 다양한 서비스를 이용해 보세요.
           </Text>
 
           <View style={styles.graphicPlaceholder} />
@@ -40,10 +41,6 @@ export function SignupCompleteScreen({ onHomePress, onLoginPress }) {
 }
 
 const styles = StyleSheet.create({
-  statusSpacer: {
-    height: 40,
-    backgroundColor: colors.white,
-  },
   container: {
     flex: 1,
     paddingHorizontal: layout.screenMargin,
@@ -52,7 +49,7 @@ const styles = StyleSheet.create({
   },
   content: {
     alignItems: "center",
-    paddingTop: 116,
+    paddingTop: 86,
   },
   title: {
     ...typography.head01Sb,

@@ -2,29 +2,17 @@ import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
-import { AppScreen } from "../components";
+import { AppScreen, Header } from "../components";
 
 export function AccountInfoScreen({ onBackPress, onPasswordPress }) {
-  const [nickname, setNickname] = useState("홍길동");
+  const [nickname, setNickname] = useState("홍길동님");
   const [nicknameDraft, setNicknameDraft] = useState("");
   const [nicknameEditMode, setNicknameEditMode] = useState(false);
 
   return (
     <AppScreen>
       <View style={styles.container}>
-        <View style={styles.statusSpacer} />
-
-        <View style={styles.header}>
-          <Pressable
-            accessibilityLabel="뒤로가기"
-            hitSlop={8}
-            onPress={onBackPress}
-            style={styles.backButton}
-          >
-            <Text style={styles.backIcon}>{"<"}</Text>
-          </Pressable>
-          <Text style={styles.headerTitle}>계정 정보</Text>
-        </View>
+        <Header type="back" title="계정 정보" onBackPress={onBackPress} />
 
         <View style={styles.body}>
           <Pressable
@@ -43,9 +31,10 @@ export function AccountInfoScreen({ onBackPress, onPasswordPress }) {
                     if (nicknameDraft.trim()) {
                       setNickname(nicknameDraft.trim());
                     }
+                    setNicknameEditMode(false);
                   }}
                   onChangeText={setNicknameDraft}
-                  placeholder="이름수정"
+                  placeholder="이름 수정"
                   placeholderTextColor="#A7B5C3"
                   style={styles.nicknameInput}
                   value={nicknameDraft}
@@ -82,39 +71,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F4F7FA",
-  },
-  statusSpacer: {
-    height: 14,
-    backgroundColor: "#F4F7FA",
-  },
-  header: {
-    height: 44,
-    paddingHorizontal: 20,
-    paddingBottom: 8,
-    flexDirection: "row",
-    alignItems: "flex-end",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E3E8EE",
-    backgroundColor: "#F4F7FA",
-  },
-  backButton: {
-    width: 28,
-    height: 30,
-    alignItems: "flex-start",
-    justifyContent: "center",
-  },
-  backIcon: {
-    color: "#9AA8B7",
-    fontSize: 30,
-    lineHeight: 30,
-    fontWeight: "300",
-  },
-  headerTitle: {
-    marginLeft: 8,
-    fontSize: 18,
-    lineHeight: 22,
-    fontWeight: "700",
-    color: "#232323",
   },
   body: {
     paddingTop: 4,

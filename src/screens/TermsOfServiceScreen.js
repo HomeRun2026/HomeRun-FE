@@ -2,6 +2,6 @@ import React from "react";
 
 import { PlaceholderScreen } from "../components";
 
-export function TermsOfServiceScreen() {
-  return <PlaceholderScreen title="이용약관" />;
+export function TermsOfServiceScreen({ onBackPress }) {
+  return <PlaceholderScreen onBackPress={onBackPress} title="이용약관" />;
 }

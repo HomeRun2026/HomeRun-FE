@@ -1,30 +1,47 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 
 import packageJson from "../../package.json";
-import { AppScreen } from "../components";
+import { AppScreen, Header } from "../components";
 
 const appVersion = packageJson.version;
 
 const MENU_ITEMS = [
   { key: "notice", label: "공지사항", icon: "message-circle" },
   { key: "contact", label: "문의하기", icon: "mail" },
-  { key: "privacy", label: "개인정보 처리 방침", icon: "shield" },
+  {
+    key: "privacy",
+    label: "개인정보 처리 방침",
+    icon: "shield",
+  },
   { key: "terms", label: "이용약관", icon: "file-text" },
 ];
 
-export function MyPageScreen({ embedded = false, onProfilePress }) {
+export function MyPageScreen({
+  embedded = false,
+  onProfilePress,
+  showHeader = true,
+  notificationCount = 0,
+  onOpenNotifications,
+  onOpenNotices,
+}) {
+  // 추후 메뉴가 늘어나면 key별 라우팅을 여기서 확장하면 됩니다.
+  const handleMenuPress = (menuKey) => {
+    if (menuKey === "notice") {
+      onOpenNotices?.();
+    }
+  };
+
   const content = (
     <View style={styles.container}>
-      <View style={styles.statusSpacer} />
-
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>마이페이지</Text>
-        <Pressable hitSlop={8} style={styles.bellButton}>
-          <Ionicons color="#CDD5DE" name="notifications" size={24} />
-        </Pressable>
-      </View>
+      {showHeader ? (
+        <Header
+          type="main"
+          notificationCount={notificationCount}
+          onBellPress={onOpenNotifications}
+        />
+      ) : null}
 
       <View style={styles.body}>
         <View>
@@ -40,6 +57,7 @@ export function MyPageScreen({ embedded = false, onProfilePress }) {
             {MENU_ITEMS.map((item, index) => (
               <Pressable
                 key={item.key}
+                onPress={() => handleMenuPress(item.key)}
                 style={[
                   styles.menuRow,
                   index !== MENU_ITEMS.length - 1 && styles.menuDivider,
@@ -67,7 +85,7 @@ export function MyPageScreen({ embedded = false, onProfilePress }) {
           </Pressable>
 
           <Pressable style={styles.versionButton}>
-            <Text style={styles.versionText}>앱 버전 {appVersion}</Text>
+            <Text style={styles.versionText}>{`앱 버전 ${appVersion}`}</Text>
           </Pressable>
         </View>
       </View>
@@ -85,33 +103,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F4F7FA",
-  },
-  statusSpacer: {
-    height: 20,
-    backgroundColor: "#F4F7FA",
-  },
-  header: {
-    height: 50,
-    paddingHorizontal: 22,
-    paddingBottom: 10,
-    flexDirection: "row",
-    alignItems: "flex-end",
-    justifyContent: "space-between",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E3E8EE",
-    backgroundColor: "#F4F7FA",
-  },
-  headerTitle: {
-    fontSize: 24,
-    lineHeight: 30,
-    fontWeight: "700",
-    color: "#222222",
-  },
-  bellButton: {
-    width: 32,
-    height: 32,
-    alignItems: "center",
-    justifyContent: "center",
   },
   body: {
     flex: 1,

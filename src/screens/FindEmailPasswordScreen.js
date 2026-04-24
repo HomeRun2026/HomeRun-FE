@@ -1,4 +1,3 @@
-//이메일/비밀번호 찾기 화면
 import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -12,7 +11,7 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
-import { AppScreen, PrimaryButton } from "../components";
+import { AppScreen, Header, PrimaryButton } from "../components";
 import { colors, layout, typography } from "../theme";
 
 export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
@@ -21,18 +20,7 @@ export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
 
   return (
     <AppScreen>
-      <View style={styles.statusSpacer} />
-      <View style={styles.header}>
-        <Pressable
-          accessibilityLabel="뒤로가기"
-          hitSlop={8}
-          onPress={onBackPress}
-          style={styles.backButton}
-        >
-          <Text style={styles.backIcon}>{"<"}</Text>
-        </Pressable>
-        <Text style={styles.title}>비밀번호 찾기</Text>
-      </View>
+      <Header type="back" title="비밀번호 찾기" onBackPress={onBackPress} />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -85,7 +73,7 @@ export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
             </View>
 
             <Text style={styles.helper}>
-              (영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 8자~16자)
+              (영문 대/소문자, 숫자/특수문자 중 2가지 이상 조합, 8~16자)
             </Text>
           </View>
         </ScrollView>
@@ -141,35 +129,6 @@ function SideButton({ children }) {
 const styles = StyleSheet.create({
   keyboardContainer: {
     flex: 1,
-  },
-  statusSpacer: {
-    height: 40,
-    backgroundColor: colors.white,
-  },
-  header: {
-    height: 76,
-    paddingHorizontal: layout.screenMargin,
-    flexDirection: "row",
-    alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray04,
-    backgroundColor: colors.white,
-  },
-  backButton: {
-    width: 32,
-    height: 44,
-    justifyContent: "center",
-  },
-  backIcon: {
-    color: colors.gray07,
-    fontSize: 38,
-    lineHeight: 38,
-    fontWeight: "300",
-  },
-  title: {
-    marginLeft: 8,
-    ...typography.head01Sb,
-    color: colors.black,
   },
   scroller: {
     flex: 1,
@@ -230,13 +189,13 @@ const styles = StyleSheet.create({
     paddingRight: 58,
   },
   eyeButton: {
-  position: "absolute",
-  right: 18,
-  width: 28,
-  height: 28,
-  alignItems: "center",
-  justifyContent: "center",
-},
+    position: "absolute",
+    right: 18,
+    width: 28,
+    height: 28,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   helper: {
     marginTop: 14,
     ...typography.body02M,

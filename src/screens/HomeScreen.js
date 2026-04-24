@@ -8,9 +8,7 @@ import HomeIn from "../../assets/images/Home_in.svg";
 import HomeOut from "../../assets/images/Home_out.svg";
 import MypageIn from "../../assets/images/Mypage_in.svg";
 import MypageOut from "../../assets/images/Mypage_out.svg";
-import BellIcon from "../../assets/images/icon_bell.svg";
-import BellNoneIcon from "../../assets/images/icon_bell_none.svg";
-import HomerunLogo from "../../assets/images/homerun_logo.svg";
+import { Header } from "../components";
 import { MyPageScreen } from "./MyPageScreen";
 import { colors, layout, typography } from "../theme";
 
@@ -43,37 +41,34 @@ export function HomeScreen({
   notificationCount = 0,
   initialTab = "home",
   onOpenAccountInfo,
+  onOpenNotifications,
+  onOpenNotices,
 }) {
   const [activeTab, setActiveTab] = useState(initialTab);
-  const HeaderBellIcon = notificationCount > 0 ? BellIcon : BellNoneIcon;
 
   return (
     <View style={styles.screen}>
       <StatusBar style="dark" backgroundColor={homeBackground} />
       <View style={styles.phone}>
         <View style={styles.content}>
-          {activeTab === "home" ? (
-            <>
-              <View style={styles.topSpacer} />
-              <View style={styles.header}>
-                <HomerunLogo accessibilityLabel="홈런" height={39} width={102} />
-                <Pressable
-                  accessibilityLabel="알림"
-                  accessibilityRole="button"
-                  hitSlop={12}
-                  style={styles.bellButton}
-                >
-                  <HeaderBellIcon height={31} width={36} />
-                </Pressable>
-              </View>
-            </>
-          ) : activeTab === "myPage" ? (
-            <MyPageScreen embedded onProfilePress={onOpenAccountInfo} />
-          ) : (
+          <Header
+            type="main"
+            notificationCount={notificationCount}
+            onBellPress={onOpenNotifications}
+          />
+
+          {activeTab === "myPage" ? (
+            <MyPageScreen
+              embedded
+              onProfilePress={onOpenAccountInfo}
+              onOpenNotices={onOpenNotices}
+              showHeader={false}
+            />
+          ) : activeTab === "character" ? (
             <View style={styles.placeholder}>
               <Text style={styles.placeholderTitle}>캐릭터</Text>
             </View>
-          )}
+          ) : null}
         </View>
 
         <View style={styles.tabBarWrap}>
@@ -141,28 +136,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: homeBackground,
   },
-  topSpacer: {
-    height: 40,
-  },
-  header: {
-    alignSelf: "center",
-    width: "100%",
-    maxWidth: 360,
-    height: 54,
-    paddingHorizontal: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: homeBackground,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray03,
-  },
-  bellButton: {
-    width: 40,
-    height: 40,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   placeholder: {
     flex: 1,
     alignItems: "center",
@@ -202,7 +175,7 @@ const styles = StyleSheet.create({
     maxWidth: 360,
     paddingTop: 16,
     paddingRight: 44,
-    paddingBottom: 24,
+    paddingBottom: 14,
     paddingLeft: 44,
     flexDirection: "row",
     alignItems: "center",

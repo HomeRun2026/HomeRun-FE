@@ -1,4 +1,3 @@
-// 비밀번호 변경 화면
 import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -12,7 +11,7 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
-import { AppScreen, PrimaryButton } from "../components";
+import { AppScreen, Header, PrimaryButton } from "../components";
 
 export function ChangePasswordScreen({ onBackPress, onConfirmPress }) {
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -21,19 +20,7 @@ export function ChangePasswordScreen({ onBackPress, onConfirmPress }) {
   return (
     <AppScreen>
       <View style={styles.container}>
-        <View style={styles.statusSpacer} />
-
-        <View style={styles.header}>
-          <Pressable
-            accessibilityLabel="뒤로가기"
-            hitSlop={8}
-            onPress={onBackPress}
-            style={styles.backButton}
-          >
-            <Text style={styles.backIcon}>{"<"}</Text>
-          </Pressable>
-          <Text style={styles.headerTitle}>비밀번호 변경</Text>
-        </View>
+        <Header type="back" title="비밀번호 변경" onBackPress={onBackPress} />
 
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -62,7 +49,7 @@ export function ChangePasswordScreen({ onBackPress, onConfirmPress }) {
                 withEye
               />
               <Text style={styles.helper}>
-                (영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 8자~16자)
+                (영문 대/소문자, 숫자/특수문자 중 2가지 이상 조합, 8~16자)
               </Text>
             </View>
           </ScrollView>
@@ -104,39 +91,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F4F7FA",
-  },
-  statusSpacer: {
-    height: 10,
-    backgroundColor: "#F4F7FA",
-  },
-  header: {
-    height: 72,
-    paddingHorizontal: 22,
-    paddingBottom: 10,
-    flexDirection: "row",
-    alignItems: "flex-end",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E3E8EE",
-    backgroundColor: "#F4F7FA",
-  },
-  backButton: {
-    width: 28,
-    height: 30,
-    alignItems: "flex-start",
-    justifyContent: "center",
-  },
-  backIcon: {
-    color: "#9AA8B7",
-    fontSize: 30,
-    lineHeight: 30,
-    fontWeight: "300",
-  },
-  headerTitle: {
-    marginLeft: 8,
-    fontSize: 34 / 2,
-    lineHeight: 44 / 2,
-    fontWeight: "700",
-    color: "#232323",
   },
   keyboardContainer: {
     flex: 1,

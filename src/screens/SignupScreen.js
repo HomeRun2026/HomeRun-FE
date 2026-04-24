@@ -10,24 +10,13 @@ import {
   View,
 } from "react-native";
 
-import { AppScreen, PrimaryButton } from "../components";
+import { AppScreen, Header, PrimaryButton } from "../components";
 import { colors, layout, typography } from "../theme";
 
 export function SignupScreen({ onBackPress, onNextPress }) {
   return (
     <AppScreen>
-      <View style={styles.statusSpacer} />
-      <View style={styles.header}>
-        <Pressable
-          accessibilityLabel="뒤로가기"
-          hitSlop={8}
-          onPress={onBackPress}
-          style={styles.backButton}
-        >
-          <Text style={styles.backIcon}>‹</Text>
-        </Pressable>
-        <Text style={styles.title}>회원가입</Text>
-      </View>
+      <Header type="back" title="회원가입" onBackPress={onBackPress} />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -77,10 +66,10 @@ export function SignupScreen({ onBackPress, onNextPress }) {
             </View>
 
             <Text style={styles.helper}>
-              (영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 8자-16자)
+              (영문 대/소문자, 숫자/특수문자 중 2가지 이상 조합, 8~16자)
             </Text>
 
-            <SignupInput placeholder="닉네임" style={styles.nicknameInput} />
+            <SignupInput placeholder="닉네임 *" style={styles.nicknameInput} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -119,34 +108,6 @@ function SideButton({ children }) {
 const styles = StyleSheet.create({
   keyboardContainer: {
     flex: 1,
-  },
-  statusSpacer: {
-    height: 40,
-    backgroundColor: colors.white,
-  },
-  header: {
-    height: 40,
-    paddingHorizontal: layout.screenMargin,
-    flexDirection: "row",
-    alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray04,
-    backgroundColor: colors.white,
-  },
-  backButton: {
-    width: 28,
-    height: 40,
-    justifyContent: "center",
-  },
-  backIcon: {
-    color: colors.gray07,
-    fontSize: 30,
-    fontWeight: "400",
-    lineHeight: 34,
-  },
-  title: {
-    ...typography.head01Sb,
-    color: colors.black,
   },
   scrollContent: {
     flexGrow: 1,
