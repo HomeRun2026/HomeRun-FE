@@ -25,11 +25,16 @@ export function MyPageScreen({
   notificationCount = 0,
   onOpenNotifications,
   onOpenNotices,
+  onOpenContact,
 }) {
   // 추후 메뉴가 늘어나면 key별 라우팅을 여기서 확장하면 됩니다.
   const handleMenuPress = (menuKey) => {
     if (menuKey === "notice") {
       onOpenNotices?.();
+    }
+
+    if (menuKey === "contact") {
+      onOpenContact?.();
     }
   };
 

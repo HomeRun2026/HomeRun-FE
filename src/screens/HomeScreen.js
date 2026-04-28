@@ -43,6 +43,7 @@ export function HomeScreen({
   onOpenAccountInfo,
   onOpenNotifications,
   onOpenNotices,
+  onOpenContact,
 }) {
   const [activeTab, setActiveTab] = useState(initialTab);
 
@@ -61,6 +62,7 @@ export function HomeScreen({
             <MyPageScreen
               embedded
               onProfilePress={onOpenAccountInfo}
+              onOpenContact={onOpenContact}
               onOpenNotices={onOpenNotices}
               showHeader={false}
             />
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
   tabBarShadow: {
     position: "absolute",
     width: "100%",
-    maxWidth: 360,
+    maxWidth: layout.maxPhoneWidth,
     height: 12,
     overflow: "hidden",
   },
@@ -172,15 +174,14 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     width: "100%",
-    maxWidth: 360,
+    maxWidth: layout.maxPhoneWidth,
     paddingTop: 16,
-    paddingRight: 44,
+    paddingRight: 58,
     paddingBottom: 14,
-    paddingLeft: 44,
+    paddingLeft: 58,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    gap: 28,
+    justifyContent: "space-between",
     backgroundColor: colors.white,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,

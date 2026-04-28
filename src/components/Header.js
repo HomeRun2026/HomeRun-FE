@@ -5,10 +5,10 @@ import { Feather } from "@expo/vector-icons";
 import BellIcon from "../../assets/images/icon_bell.svg";
 import BellNoneIcon from "../../assets/images/icon_bell_none.svg";
 import HomerunLogo from "../../assets/images/homerun_logo.svg";
-import { colors } from "../theme";
+import { colors, layout } from "../theme";
 
 const MAIN_BACKGROUND = "#FCFDFE";
-const SUB_BACKGROUND = "#F4F7FA";
+const SUB_BACKGROUND = MAIN_BACKGROUND;
 
 export function Header({
   type = "main",
@@ -61,14 +61,14 @@ export function Header({
 
 const styles = StyleSheet.create({
   topSpacer: {
-    height: 30,
+    height: 24,
   },
   header: {
     alignSelf: "center",
     width: "100%",
-    maxWidth: 360,
-    height: 56,
-    paddingHorizontal: 5,
+    maxWidth: layout.maxPhoneWidth,
+    height: 70,
+    paddingHorizontal: 22,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

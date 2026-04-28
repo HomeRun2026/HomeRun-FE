@@ -5,6 +5,7 @@ import {
   ChangePasswordScreen,
   FindEmailPasswordScreen,
   HomeScreen,
+  InquiryScreen,
   LoginScreen,
   NoticeDetailScreen,
   NoticesScreen,
@@ -50,6 +51,7 @@ export default function App() {
     return (
       <HomeScreen
         onOpenAccountInfo={() => setScreen("accountInfo")}
+        onOpenContact={() => setScreen("inquiryHomeMyPage")}
         onOpenNotices={() => setScreen("noticesHomeMyPage")}
         onOpenNotifications={() => setScreen("notificationsHome")}
       />
@@ -61,10 +63,15 @@ export default function App() {
       <HomeScreen
         initialTab="myPage"
         onOpenAccountInfo={() => setScreen("accountInfo")}
+        onOpenContact={() => setScreen("inquiryHomeMyPage")}
         onOpenNotices={() => setScreen("noticesHomeMyPage")}
         onOpenNotifications={() => setScreen("notificationsHomeMyPage")}
       />
     );
+  }
+
+  if (screen === "inquiryHomeMyPage") {
+    return <InquiryScreen onBackPress={() => setScreen("homeMyPage")} />;
   }
 
   if (screen === "noticesHomeMyPage") {
