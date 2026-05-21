@@ -1,11 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
 import packageJson from "../../package.json";
 import { AppScreen, Header } from "../components";
+import { buildApiUrl } from "../config/api";
 
-const appVersion = packageJson.version;
+const defaultMyPageInfo = {
+  appVersion: packageJson.version,
+  email: "abcdg@gmail.com",
+  nickname: "홍길동",
+};
 
 const MENU_ITEMS = [
   { key: "notice", label: "공지사항", icon: "message-circle" },
@@ -27,6 +32,44 @@ export function MyPageScreen({
   onOpenNotices,
   onOpenContact,
 }) {
+  const [myPageInfo, setMyPageInfo] = useState(defaultMyPageInfo);
+
+  useEffect(() => {
+    let isActive = true;
+
+    async function loadMyPageInfo() {
+      try {
+        const response = await fetch(buildApiUrl("/api/mypage"));
+
+        if (!response.ok) {
+          throw new Error("Failed to load mypage");
+        }
+
+        const data = await response.json();
+
+        if (!isActive) {
+          return;
+        }
+
+        setMyPageInfo({
+          appVersion: data.appVersion ?? defaultMyPageInfo.appVersion,
+          email: data.email ?? defaultMyPageInfo.email,
+          nickname: data.nickname ?? defaultMyPageInfo.nickname,
+        });
+      } catch {
+        if (isActive) {
+          setMyPageInfo(defaultMyPageInfo);
+        }
+      }
+    }
+
+    loadMyPageInfo();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
   // 추후 메뉴가 늘어나면 key별 라우팅을 여기서 확장하면 됩니다.
   const handleMenuPress = (menuKey) => {
     if (menuKey === "notice") {
@@ -52,8 +95,8 @@ export function MyPageScreen({
         <View>
           <Pressable onPress={onProfilePress} style={styles.profileCard}>
             <View style={styles.profileTextWrap}>
-              <Text style={styles.profileName}>홍길동님</Text>
-              <Text style={styles.profileEmail}>abcdg@gmail.com</Text>
+              <Text style={styles.profileName}>{`${myPageInfo.nickname}님`}</Text>
+              <Text style={styles.profileEmail}>{myPageInfo.email}</Text>
             </View>
             <Feather color="#BCC6D1" name="chevron-right" size={24} />
           </Pressable>
@@ -90,7 +133,9 @@ export function MyPageScreen({
           </Pressable>
 
           <Pressable style={styles.versionButton}>
-            <Text style={styles.versionText}>{`앱 버전 ${appVersion}`}</Text>
+            <Text style={styles.versionText}>
+              {`앱 버전 ${myPageInfo.appVersion}`}
+            </Text>
           </Pressable>
         </View>
       </View>

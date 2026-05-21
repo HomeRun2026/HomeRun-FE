@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -14,6 +15,33 @@ import { AppScreen, Header, PrimaryButton } from "../components";
 import { colors, layout, typography } from "../theme";
 
 export function SignupScreen({ onBackPress, onNextPress }) {
+  const [email, setEmail] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [nickname, setNickname] = useState("");
+
+  const handleNextPress = () => {
+    const trimmedEmail = email.trim();
+    const trimmedNickname = nickname.trim();
+
+    if (!trimmedEmail || !password || !passwordConfirm || !trimmedNickname) {
+      Alert.alert("회원가입", "필수 정보를 모두 입력해 주세요.");
+      return;
+    }
+
+    if (password !== passwordConfirm) {
+      Alert.alert("회원가입", "비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    onNextPress?.({
+      email: trimmedEmail,
+      nickname: trimmedNickname,
+      password,
+    });
+  };
+
   return (
     <AppScreen>
       <Header type="back" title="회원가입" onBackPress={onBackPress} />
@@ -35,16 +63,20 @@ export function SignupScreen({ onBackPress, onNextPress }) {
                   autoCapitalize="none"
                   autoComplete="email"
                   keyboardType="email-address"
+                  onChangeText={setEmail}
                   placeholder="이메일 *"
                   style={styles.flexInput}
+                  value={email}
                 />
                 <SideButton>인증</SideButton>
               </View>
               <View style={styles.row}>
                 <SignupInput
                   keyboardType="number-pad"
+                  onChangeText={setVerificationCode}
                   placeholder="인증번호 입력 *"
                   style={styles.flexInput}
+                  value={verificationCode}
                 />
                 <SideButton>확인</SideButton>
               </View>
@@ -54,14 +86,18 @@ export function SignupScreen({ onBackPress, onNextPress }) {
               <SignupInput
                 autoCapitalize="none"
                 autoComplete="password"
+                onChangeText={setPassword}
                 placeholder="비밀번호 *"
                 secureTextEntry
+                value={password}
               />
               <SignupInput
                 autoCapitalize="none"
                 autoComplete="password"
+                onChangeText={setPasswordConfirm}
                 placeholder="비밀번호 확인 *"
                 secureTextEntry
+                value={passwordConfirm}
               />
             </View>
 
@@ -69,14 +105,19 @@ export function SignupScreen({ onBackPress, onNextPress }) {
               (영문 대/소문자, 숫자/특수문자 중 2가지 이상 조합, 8~16자)
             </Text>
 
-            <SignupInput placeholder="닉네임 *" style={styles.nicknameInput} />
+            <SignupInput
+              onChangeText={setNickname}
+              placeholder="닉네임 *"
+              style={styles.nicknameInput}
+              value={nickname}
+            />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
 
       <View style={styles.footer}>
         <PrimaryButton
-          onPress={onNextPress}
+          onPress={handleNextPress}
           style={styles.nextButton}
           textStyle={styles.nextText}
         >
