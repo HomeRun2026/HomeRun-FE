@@ -14,6 +14,9 @@ export function Header({
   type = "main",
   title,
   notificationCount = 0,
+  headerStyle,
+  titleStyle,
+  topSpacerStyle,
   onBellPress,
   onBackPress,
 }) {
@@ -22,8 +25,20 @@ export function Header({
 
   return (
     <>
-      <View style={[styles.topSpacer, isMain ? styles.mainBg : styles.subBg]} />
-      <View style={[styles.header, isMain ? styles.mainBg : styles.subBg]}>
+      <View
+        style={[
+          styles.topSpacer,
+          isMain ? styles.mainBg : styles.subBg,
+          topSpacerStyle,
+        ]}
+      />
+      <View
+        style={[
+          styles.header,
+          isMain ? styles.mainBg : styles.subBg,
+          headerStyle,
+        ]}
+      >
         {isMain ? (
           <>
             <HomerunLogo accessibilityLabel="홈런" height={39} width={102} />
@@ -48,7 +63,7 @@ export function Header({
             >
               <Feather color="#9AA8B7" name="chevron-left" size={26} />
             </Pressable>
-            <Text numberOfLines={1} style={styles.title}>
+            <Text numberOfLines={1} style={[styles.title, titleStyle]}>
               {title}
             </Text>
             <View style={styles.iconButton} />

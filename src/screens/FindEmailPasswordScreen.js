@@ -9,8 +9,8 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
 
+import VisibleIcon from "../../assets/images/icon_visible.svg";
 import { AppScreen, Header, PrimaryButton } from "../components";
 import { colors, layout, typography } from "../theme";
 
@@ -20,7 +20,14 @@ export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
 
   return (
     <AppScreen>
-      <Header type="back" title="비밀번호 찾기" onBackPress={onBackPress} />
+      <Header
+        type="back"
+        title="비밀번호 찾기"
+        headerStyle={styles.findPasswordHeader}
+        titleStyle={styles.findPasswordTitle}
+        topSpacerStyle={styles.findPasswordHeaderSpacer}
+        onBackPress={onBackPress}
+      />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -73,7 +80,7 @@ export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
             </View>
 
             <Text style={styles.helper}>
-              (영문 대/소문자, 숫자/특수문자 중 2가지 이상 조합, 8~16자)
+              (영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 8자~16자)
             </Text>
           </View>
         </ScrollView>
@@ -112,7 +119,7 @@ function PasswordInput({ onToggleVisibility, style, ...props }) {
         onPress={onToggleVisibility}
         style={styles.eyeButton}
       >
-        <Feather color="#CDD7E1" name="eye" size={22} />
+        <VisibleIcon />
       </Pressable>
     </View>
   );
@@ -127,6 +134,29 @@ function SideButton({ children }) {
 }
 
 const styles = StyleSheet.create({
+  findPasswordHeaderSpacer: {
+    backgroundColor: colors.white,
+  },
+  findPasswordHeader: {
+    alignSelf: "stretch",
+    height: 54,
+    paddingHorizontal: 16,
+    alignItems: "center",
+    gap: 12,
+    justifyContent: "flex-start",
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray03,
+    backgroundColor: colors.white,
+  },
+  findPasswordTitle: {
+    color: colors.black,
+    fontFamily: "SUIT",
+    fontSize: 20,
+    fontStyle: "normal",
+    fontWeight: "600",
+    lineHeight: 20,
+    letterSpacing: -0.2,
+  },
   keyboardContainer: {
     flex: 1,
   },
@@ -154,19 +184,20 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 54,
-    borderRadius: 12,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.gray04,
     backgroundColor: colors.gray02,
     paddingHorizontal: 16,
-    color: colors.gray09,
-    ...typography.head01Sb,
-    fontWeight: "500",
+    color: colors.gray06,
+    ...typography.body01Sb,
+    fontStyle: "normal",
+    letterSpacing: -0.16,
   },
   sideButton: {
     width: 76,
     height: 54,
-    borderRadius: 12,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.gray04,
     backgroundColor: colors.gray04,
@@ -174,9 +205,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   sideButtonText: {
-    ...typography.head01Sb,
     color: colors.gray07,
-    fontWeight: "500",
+    textAlign: "center",
+    ...typography.body01Sb,
+    fontStyle: "normal",
+    letterSpacing: -0.16,
   },
   passwordGroup: {
     marginTop: 32,
@@ -190,23 +223,23 @@ const styles = StyleSheet.create({
   },
   eyeButton: {
     position: "absolute",
-    right: 18,
-    width: 28,
-    height: 28,
+    right: 16,
+    width: 24,
+    height: 24,
     alignItems: "center",
     justifyContent: "center",
   },
   helper: {
     marginTop: 8,
-    ...typography.body02M,
+    ...typography.caption01M,
     color: colors.gray06,
   },
   footer: {
     paddingHorizontal: 16,
-    paddingBottom: 62,
+    paddingBottom: 24,
   },
   confirmButton: {
     height: 54,
-    borderRadius: 27,
+    borderRadius: 50,
   },
 });
