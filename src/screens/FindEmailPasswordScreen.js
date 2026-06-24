@@ -138,34 +138,34 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 30,
+    paddingHorizontal: 16,
+    paddingTop: 24,
   },
   fieldGroup: {
-    gap: 12,
+    gap: 8,
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 8,
   },
   flexInput: {
     flex: 1,
   },
   input: {
-    height: 68,
+    height: 54,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.gray04,
-    backgroundColor: colors.gray03,
-    paddingHorizontal: 20,
+    backgroundColor: colors.gray02,
+    paddingHorizontal: 16,
     color: colors.gray09,
     ...typography.head01Sb,
     fontWeight: "500",
   },
   sideButton: {
-    width: 106,
-    height: 68,
+    width: 76,
+    height: 54,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.gray04,
@@ -179,8 +179,8 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   passwordGroup: {
-    marginTop: 58,
-    gap: 12,
+    marginTop: 32,
+    gap: 8,
   },
   passwordInputWrap: {
     justifyContent: "center",
@@ -197,16 +197,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   helper: {
-    marginTop: 14,
+    marginTop: 8,
     ...typography.body02M,
     color: colors.gray06,
   },
   footer: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingBottom: 62,
   },
   confirmButton: {
-    height: 68,
-    borderRadius: 34,
+    height: 54,
+    borderRadius: 27,
   },
 });
