@@ -15,8 +15,12 @@ import { AppScreen, Header, PrimaryButton } from "../components";
 import { colors, layout, typography } from "../theme";
 
 export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
+  const [email, setEmail] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showNewPasswordConfirm, setShowNewPasswordConfirm] = useState(false);
+  const isEmailEntered = email.trim().length > 0;
+  const isVerificationCodeEntered = verificationCode.trim().length > 0;
 
   return (
     <AppScreen>
@@ -46,19 +50,23 @@ export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
                   autoCapitalize="none"
                   autoComplete="email"
                   keyboardType="email-address"
+                  onChangeText={setEmail}
                   placeholder="이메일"
                   style={styles.flexInput}
+                  value={email}
                 />
-                <SideButton>인증</SideButton>
+                <SideButton active={isEmailEntered}>인증</SideButton>
               </View>
 
               <View style={styles.row}>
                 <FieldInput
                   keyboardType="number-pad"
+                  onChangeText={setVerificationCode}
                   placeholder="인증번호 입력"
                   style={styles.flexInput}
+                  value={verificationCode}
                 />
-                <SideButton>확인</SideButton>
+                <SideButton active={isVerificationCodeEntered}>확인</SideButton>
               </View>
             </View>
 
@@ -98,7 +106,10 @@ export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
 function FieldInput({ style, ...props }) {
   return (
     <TextInput
+      cursorColor={colors.black}
       placeholderTextColor={colors.gray06}
+      selectionColor={colors.black}
+      underlineColorAndroid="transparent"
       style={[styles.input, style]}
       {...props}
     />
@@ -109,7 +120,10 @@ function PasswordInput({ onToggleVisibility, style, ...props }) {
   return (
     <View style={styles.passwordInputWrap}>
       <TextInput
+        cursorColor={colors.black}
         placeholderTextColor={colors.gray06}
+        selectionColor={colors.black}
+        underlineColorAndroid="transparent"
         style={[styles.input, styles.passwordInput, style]}
         {...props}
       />
@@ -125,10 +139,14 @@ function PasswordInput({ onToggleVisibility, style, ...props }) {
   );
 }
 
-function SideButton({ children }) {
+function SideButton({ active, children }) {
   return (
-    <Pressable style={styles.sideButton}>
-      <Text style={styles.sideButtonText}>{children}</Text>
+    <Pressable style={[styles.sideButton, active && styles.sideButtonActive]}>
+      <Text
+        style={[styles.sideButtonText, active && styles.sideButtonTextActive]}
+      >
+        {children}
+      </Text>
     </Pressable>
   );
 }
@@ -187,9 +205,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.gray04,
+    ...Platform.select({
+      web: {
+        outlineColor: "transparent",
+        outlineStyle: "none",
+        outlineWidth: 0,
+        boxShadow: "none",
+      },
+    }),
     backgroundColor: colors.gray02,
     paddingHorizontal: 16,
-    color: colors.gray06,
+    color: colors.black,
     ...typography.body01Sb,
     fontStyle: "normal",
     letterSpacing: -0.16,
@@ -204,12 +230,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  sideButtonActive: {
+    borderColor: colors.main,
+    backgroundColor: colors.main,
+  },
   sideButtonText: {
     color: colors.gray07,
     textAlign: "center",
     ...typography.body01Sb,
     fontStyle: "normal",
     letterSpacing: -0.16,
+  },
+  sideButtonTextActive: {
+    color: colors.white,
   },
   passwordGroup: {
     marginTop: 32,
