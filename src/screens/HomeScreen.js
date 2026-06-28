@@ -12,7 +12,7 @@ import { Header } from "../components";
 import { MyPageScreen } from "./MyPageScreen";
 import { colors, layout, typography } from "../theme";
 
-const homeBackground = "#FCFDFE";
+const homeBackground = colors.gray01;
 const tabIconSize = 32;
 const topShadowOpacities = [0.01, 0.02, 0.03, 0.04, 0.055, 0.07];
 const bottomShadowOpacities = [0.05, 0.04, 0.03, 0.02, 0.01];
@@ -42,6 +42,7 @@ export function HomeScreen({
   notificationCount = 0,
   initialTab = "home",
   onOpenAccountInfo,
+  onOpenPassword,
   onOpenNotifications,
   onOpenNotices,
   onOpenContact,
@@ -53,19 +54,23 @@ export function HomeScreen({
       <StatusBar style="dark" backgroundColor={homeBackground} />
       <View style={styles.phone}>
         <View style={styles.content}>
-          <Header
-            type="main"
-            notificationCount={notificationCount}
-            onBellPress={onOpenNotifications}
-          />
+          {activeTab === "myPage" ? null : (
+            <Header
+              type="main"
+              notificationCount={notificationCount}
+              onBellPress={onOpenNotifications}
+            />
+          )}
 
           {activeTab === "myPage" ? (
             <MyPageScreen
               embedded
               onProfilePress={onOpenAccountInfo}
+              onOpenNotifications={onOpenNotifications}
+              onOpenPassword={onOpenPassword}
               onOpenContact={onOpenContact}
               onOpenNotices={onOpenNotices}
-              showHeader={false}
+              notificationCount={notificationCount}
             />
           ) : activeTab === "character" ? (
             <View style={styles.placeholder}>

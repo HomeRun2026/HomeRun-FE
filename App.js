@@ -54,6 +54,7 @@ export default function App() {
         onOpenContact={() => setScreen("inquiryHomeMyPage")}
         onOpenNotices={() => setScreen("noticesHomeMyPage")}
         onOpenNotifications={() => setScreen("notificationsHome")}
+        onOpenPassword={() => setScreen("changePasswordHomeMyPage")}
       />
     );
   }
@@ -66,6 +67,7 @@ export default function App() {
         onOpenContact={() => setScreen("inquiryHomeMyPage")}
         onOpenNotices={() => setScreen("noticesHomeMyPage")}
         onOpenNotifications={() => setScreen("notificationsHomeMyPage")}
+        onOpenPassword={() => setScreen("changePasswordHomeMyPage")}
       />
     );
   }
@@ -117,6 +119,15 @@ export default function App() {
       <ChangePasswordScreen
         onBackPress={() => setScreen("accountInfo")}
         onConfirmPress={() => setScreen("accountInfo")}
+      />
+    );
+  }
+
+  if (screen === "changePasswordHomeMyPage") {
+    return (
+      <ChangePasswordScreen
+        onBackPress={() => setScreen("homeMyPage")}
+        onConfirmPress={() => setScreen("homeMyPage")}
       />
     );
   }
