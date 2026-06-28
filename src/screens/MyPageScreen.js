@@ -41,6 +41,8 @@ export function MyPageScreen({
   onOpenNotices,
   onOpenContact,
   onOpenPassword,
+  onOpenPrivacy,
+  onOpenTerms,
 }) {
   const HeaderBellIcon = notificationCount > 0 ? BellIcon : BellNoneIcon;
 
@@ -59,6 +61,14 @@ export function MyPageScreen({
 
     if (menuKey === "contact") {
       onOpenContact?.();
+    }
+
+    if (menuKey === "privacy") {
+      onOpenPrivacy?.();
+    }
+
+    if (menuKey === "terms") {
+      onOpenTerms?.();
     }
   };
 

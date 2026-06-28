@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 
+import HiddenIcon from "../../assets/images/icon_password_hidden.svg";
 import VisibleIcon from "../../assets/images/icon_visible.svg";
 import { AppScreen, Header, PrimaryButton } from "../components";
 import { colors, layout, typography } from "../theme";
@@ -95,7 +96,11 @@ export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
       </KeyboardAvoidingView>
 
       <View style={styles.footer}>
-        <PrimaryButton onPress={onConfirmPress} style={styles.confirmButton}>
+        <PrimaryButton
+          onPress={onConfirmPress}
+          style={styles.confirmButton}
+          textStyle={styles.confirmText}
+        >
           확인
         </PrimaryButton>
       </View>
@@ -116,24 +121,33 @@ function FieldInput({ style, ...props }) {
   );
 }
 
-function PasswordInput({ onToggleVisibility, style, ...props }) {
+function PasswordInput({
+  onToggleVisibility,
+  secureTextEntry,
+  style,
+  ...props
+}) {
+  const VisibilityIcon = secureTextEntry ? HiddenIcon : VisibleIcon;
+
   return (
     <View style={styles.passwordInputWrap}>
       <TextInput
         cursorColor={colors.black}
         placeholderTextColor={colors.gray06}
         selectionColor={colors.black}
+        secureTextEntry={secureTextEntry}
         underlineColorAndroid="transparent"
         style={[styles.input, styles.passwordInput, style]}
         {...props}
       />
       <Pressable
+        accessibilityLabel={secureTextEntry ? "비밀번호 보기" : "비밀번호 숨기기"}
         accessibilityRole="button"
         hitSlop={8}
         onPress={onToggleVisibility}
         style={styles.eyeButton}
       >
-        <VisibleIcon />
+        <VisibilityIcon />
       </Pressable>
     </View>
   );
@@ -268,11 +282,24 @@ const styles = StyleSheet.create({
     color: colors.gray06,
   },
   footer: {
-    paddingHorizontal: 16,
-    paddingBottom: 24,
+    paddingHorizontal: layout.screenMargin,
+    paddingBottom: 64,
+    alignItems: "center",
   },
   confirmButton: {
+    display: "flex",
+    width: 328,
+    maxWidth: "100%",
     height: 54,
-    borderRadius: 50,
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    borderRadius: 8,
+    backgroundColor: colors.main,
+  },
+  confirmText: {
+    ...typography.body01Sb,
+    color: colors.white,
   },
 });

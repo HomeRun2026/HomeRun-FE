@@ -73,6 +73,7 @@ export function InquiryScreen({ onBackPress }) {
             <PrimaryButton
               onPress={handleSubmit}
               style={styles.submitButton}
+              textStyle={styles.submitText}
             >
               등록
             </PrimaryButton>
@@ -123,5 +124,20 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     marginTop: 38,
+    display: "flex",
+    width: 328,
+    maxWidth: "100%",
+    height: 54,
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    alignSelf: "center",
+    borderRadius: 8,
+    backgroundColor: colors.main,
+  },
+  submitText: {
+    ...typography.body01Sb,
+    color: colors.white,
   },
 });

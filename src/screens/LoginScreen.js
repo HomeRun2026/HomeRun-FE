@@ -49,7 +49,11 @@ export function LoginScreen({
             placeholder="비밀번호"
             secureTextEntry
           />
-          <PrimaryButton onPress={handleLoginPress} style={styles.loginButton}>
+          <PrimaryButton
+            onPress={handleLoginPress}
+            style={styles.loginButton}
+            textStyle={styles.loginButtonText}
+          >
             로그인
           </PrimaryButton>
         </View>
@@ -109,13 +113,29 @@ const styles = StyleSheet.create({
     marginBottom: 44,
   },
   form: {
-    gap: 12,
+    gap: 8,
   },
   loginButton: {
+    display: "flex",
+    height: 54,
     marginTop: 4,
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+    alignSelf: "stretch",
+    borderRadius: 8,
+    backgroundColor: colors.main,
+  },
+  loginButtonText: {
+    ...typography.body01Sb,
+    color: colors.white,
+    fontStyle: "normal",
+    letterSpacing: -0.16,
+    textAlign: "center",
   },
   options: {
-    marginTop: 14,
+    marginTop: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -126,20 +146,25 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   check: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 14,
+    height: 14,
+    aspectRatio: 1,
+    borderRadius: 7,
     borderWidth: 1,
-    borderColor: colors.gray05,
-    backgroundColor: colors.gray05,
+    borderColor: colors.gray04,
+    backgroundColor: colors.gray03,
   },
   checkOn: {
     borderColor: colors.main,
     backgroundColor: colors.main,
   },
   optionText: {
-    ...typography.body03M,
+    ...typography.caption01M,
     color: colors.gray07,
+    fontStyle: "normal",
+    lineHeight: 19.2,
+    letterSpacing: -0.12,
+    textAlign: "center",
   },
   links: {
     flexDirection: "row",
@@ -167,7 +192,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray04,
   },
   simpleText: {
-    ...typography.body03M,
+    ...typography.caption01M,
     color: colors.gray06,
+    fontStyle: "normal",
+    lineHeight: 19.2,
+    letterSpacing: -0.12,
+    textAlign: "center",
   },
 });

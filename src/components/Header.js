@@ -1,14 +1,14 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { Feather } from "@expo/vector-icons";
 
+import BackIconDefault from "../../assets/images/L.svg";
 import BellIcon from "../../assets/images/icon_bell.svg";
 import BellNoneIcon from "../../assets/images/icon_bell_none.svg";
 import HomerunLogo from "../../assets/images/homerun_logo.svg";
-import { colors, layout } from "../theme";
+import { colors, layout, typography } from "../theme";
 
 const MAIN_BACKGROUND = "#FCFDFE";
-const SUB_BACKGROUND = MAIN_BACKGROUND;
+const SUB_BACKGROUND = colors.white;
 
 export function Header({
   type = "main",
@@ -39,6 +39,7 @@ export function Header({
       <View
         style={[
           styles.header,
+          isMain ? styles.mainHeader : styles.backHeader,
           isMain ? styles.mainBg : styles.subBg,
           headerStyle,
         ]}
@@ -51,7 +52,7 @@ export function Header({
               accessibilityRole="button"
               hitSlop={12}
               onPress={onBellPress}
-              style={styles.iconButton}
+              style={[styles.iconButton, styles.mainIconButton]}
             >
               <HeaderBellIcon height={31} width={36} />
             </Pressable>
@@ -63,7 +64,7 @@ export function Header({
               accessibilityRole="button"
               hitSlop={12}
               onPress={onBackPress}
-              style={[styles.iconButton, backButtonStyle]}
+              style={[styles.iconButton, styles.backIconButton, backButtonStyle]}
             >
               {BackIcon ? (
                 <BackIcon
@@ -72,13 +73,19 @@ export function Header({
                   width={24}
                 />
               ) : (
-                <Feather color="#9AA8B7" name="chevron-left" size={26} />
+                <BackIconDefault
+                  height={24}
+                  style={[styles.backIcon, backIconStyle]}
+                  width={24}
+                />
               )}
             </Pressable>
             <Text numberOfLines={1} style={[styles.title, titleStyle]}>
               {title}
             </Text>
-            {showRightPlaceholder ? <View style={styles.iconButton} /> : null}
+            {showRightPlaceholder ? (
+              <View style={[styles.iconButton, styles.backIconButton]} />
+            ) : null}
           </>
         )}
       </View>
@@ -94,13 +101,22 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: "100%",
     maxWidth: layout.maxPhoneWidth,
-    height: 70,
-    paddingHorizontal: 22,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
     borderBottomWidth: 1,
+  },
+  mainHeader: {
+    height: 70,
+    paddingHorizontal: 22,
+    justifyContent: "space-between",
     borderBottomColor: colors.gray04,
+  },
+  backHeader: {
+    height: 54,
+    paddingHorizontal: 16,
+    justifyContent: "flex-start",
+    gap: 12,
+    borderBottomColor: colors.gray03,
   },
   mainBg: {
     backgroundColor: MAIN_BACKGROUND,
@@ -109,10 +125,16 @@ const styles = StyleSheet.create({
     backgroundColor: SUB_BACKGROUND,
   },
   iconButton: {
-    width: 40,
-    height: 40,
     alignItems: "center",
     justifyContent: "center",
+  },
+  mainIconButton: {
+    width: 40,
+    height: 40,
+  },
+  backIconButton: {
+    width: 24,
+    height: 24,
   },
   backIcon: {
     width: 24,
@@ -121,10 +143,8 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    marginLeft: 8,
-    fontSize: 18,
-    lineHeight: 22,
-    fontWeight: "700",
-    color: "#232323",
+    marginLeft: 0,
+    ...typography.head01Sb,
+    color: colors.black,
   },
 });

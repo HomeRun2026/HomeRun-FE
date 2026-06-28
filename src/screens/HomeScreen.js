@@ -46,6 +46,8 @@ export function HomeScreen({
   onOpenNotifications,
   onOpenNotices,
   onOpenContact,
+  onOpenPrivacy,
+  onOpenTerms,
 }) {
   const [activeTab, setActiveTab] = useState(initialTab);
 
@@ -70,6 +72,8 @@ export function HomeScreen({
               onOpenPassword={onOpenPassword}
               onOpenContact={onOpenContact}
               onOpenNotices={onOpenNotices}
+              onOpenPrivacy={onOpenPrivacy}
+              onOpenTerms={onOpenTerms}
               notificationCount={notificationCount}
             />
           ) : activeTab === "character" ? (

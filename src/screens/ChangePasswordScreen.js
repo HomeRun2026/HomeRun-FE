@@ -12,10 +12,12 @@ import {
 
 import { AppScreen, Header, PrimaryButton } from "../components";
 import BackIcon from "../../assets/images/L.svg";
+import HiddenIcon from "../../assets/images/icon_password_hidden.svg";
 import VisibleIcon from "../../assets/images/icon_visible.svg";
 import { colors, layout, typography } from "../theme";
 
 export function ChangePasswordScreen({ onBackPress, onConfirmPress }) {
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showNewPasswordConfirm, setShowNewPasswordConfirm] = useState(false);
 
@@ -46,7 +48,14 @@ export function ChangePasswordScreen({ onBackPress, onConfirmPress }) {
           >
             <View style={styles.content}>
               <View style={styles.currentPasswordGroup}>
-                <PasswordInput placeholder="현재 비밀번호" secureTextEntry />
+                <PasswordInput
+                  onToggleVisibility={() =>
+                    setShowCurrentPassword((value) => !value)
+                  }
+                  placeholder="현재 비밀번호"
+                  secureTextEntry={!showCurrentPassword}
+                  withEye
+                />
               </View>
               <View style={styles.passwordGroup}>
                 <PasswordInput
@@ -83,25 +92,35 @@ export function ChangePasswordScreen({ onBackPress, onConfirmPress }) {
   );
 }
 
-function PasswordInput({ onToggleVisibility, style, withEye = false, ...props }) {
+function PasswordInput({
+  onToggleVisibility,
+  secureTextEntry,
+  style,
+  withEye = false,
+  ...props
+}) {
+  const VisibilityIcon = secureTextEntry ? HiddenIcon : VisibleIcon;
+
   return (
     <View style={styles.inputWrap}>
       <TextInput
         cursorColor={colors.gray06}
         placeholderTextColor={colors.gray06}
         selectionColor={colors.gray06}
+        secureTextEntry={secureTextEntry}
         style={[styles.input, withEye && styles.inputWithEye, style]}
         underlineColorAndroid="transparent"
         {...props}
       />
       {withEye && (
         <Pressable
+          accessibilityLabel={secureTextEntry ? "비밀번호 보기" : "비밀번호 숨기기"}
           accessibilityRole="button"
           hitSlop={8}
           onPress={onToggleVisibility}
           style={styles.eyeButton}
         >
-          <VisibleIcon />
+          <VisibilityIcon />
         </Pressable>
       )}
     </View>

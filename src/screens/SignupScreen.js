@@ -12,11 +12,15 @@ import {
 
 import { AppScreen, Header, PrimaryButton } from "../components";
 import BackIcon from "../../assets/images/L.svg";
+import HiddenIcon from "../../assets/images/icon_password_hidden.svg";
+import VisibleIcon from "../../assets/images/icon_visible.svg";
 import { colors, layout, typography } from "../theme";
 
 export function SignupScreen({ onBackPress, onNextPress }) {
   const [email, setEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const isEmailEntered = email.trim().length > 0;
   const isVerificationCodeEntered = verificationCode.trim().length > 0;
 
@@ -70,18 +74,22 @@ export function SignupScreen({ onBackPress, onNextPress }) {
             </View>
 
             <View style={styles.passwordGroup}>
-              <SignupInput
+              <PasswordInput
                 autoCapitalize="none"
                 autoComplete="password"
+                onToggleVisibility={() => setShowPassword((value) => !value)}
                 placeholder="비밀번호 *"
-                secureTextEntry
+                secureTextEntry={!showPassword}
                 style={styles.stretchInput}
               />
-              <SignupInput
+              <PasswordInput
                 autoCapitalize="none"
                 autoComplete="password"
+                onToggleVisibility={() =>
+                  setShowPasswordConfirm((value) => !value)
+                }
                 placeholder="비밀번호 확인 *"
-                secureTextEntry
+                secureTextEntry={!showPasswordConfirm}
                 style={styles.stretchInput}
               />
             </View>
@@ -121,6 +129,38 @@ function SignupInput({ style, ...props }) {
       underlineColorAndroid="transparent"
       {...props}
     />
+  );
+}
+
+function PasswordInput({
+  onToggleVisibility,
+  secureTextEntry,
+  style,
+  ...props
+}) {
+  const VisibilityIcon = secureTextEntry ? HiddenIcon : VisibleIcon;
+
+  return (
+    <View style={styles.passwordInputWrap}>
+      <TextInput
+        cursorColor={colors.black}
+        placeholderTextColor={colors.gray06}
+        selectionColor={colors.black}
+        secureTextEntry={secureTextEntry}
+        style={[styles.input, style, styles.passwordInput]}
+        underlineColorAndroid="transparent"
+        {...props}
+      />
+      <Pressable
+        accessibilityLabel={secureTextEntry ? "비밀번호 보기" : "비밀번호 숨기기"}
+        accessibilityRole="button"
+        hitSlop={8}
+        onPress={onToggleVisibility}
+        style={styles.eyeButton}
+      >
+        <VisibilityIcon />
+      </Pressable>
+    </View>
   );
 }
 
@@ -251,6 +291,20 @@ const styles = StyleSheet.create({
   passwordGroup: {
     marginTop: 32,
     gap: 8,
+  },
+  passwordInputWrap: {
+    justifyContent: "center",
+  },
+  passwordInput: {
+    paddingRight: 58,
+  },
+  eyeButton: {
+    position: "absolute",
+    right: 16,
+    width: 24,
+    height: 24,
+    alignItems: "center",
+    justifyContent: "center",
   },
   helper: {
     marginTop: 8,

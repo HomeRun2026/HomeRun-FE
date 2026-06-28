@@ -10,9 +10,11 @@ import {
   NoticeDetailScreen,
   NoticesScreen,
   NotificationsScreen,
+  PrivacyPolicyScreen,
   SignupCompleteScreen,
   SignupScreen,
   TermsAgreementScreen,
+  TermsOfServiceScreen,
 } from "./src/screens";
 
 export default function App() {
@@ -55,6 +57,8 @@ export default function App() {
         onOpenNotices={() => setScreen("noticesHomeMyPage")}
         onOpenNotifications={() => setScreen("notificationsHome")}
         onOpenPassword={() => setScreen("changePasswordHomeMyPage")}
+        onOpenPrivacy={() => setScreen("privacyPolicyHomeMyPage")}
+        onOpenTerms={() => setScreen("termsOfServiceHomeMyPage")}
       />
     );
   }
@@ -68,6 +72,8 @@ export default function App() {
         onOpenNotices={() => setScreen("noticesHomeMyPage")}
         onOpenNotifications={() => setScreen("notificationsHomeMyPage")}
         onOpenPassword={() => setScreen("changePasswordHomeMyPage")}
+        onOpenPrivacy={() => setScreen("privacyPolicyHomeMyPage")}
+        onOpenTerms={() => setScreen("termsOfServiceHomeMyPage")}
       />
     );
   }
@@ -95,6 +101,14 @@ export default function App() {
         onBackPress={() => setScreen("noticesHomeMyPage")}
       />
     );
+  }
+
+  if (screen === "privacyPolicyHomeMyPage") {
+    return <PrivacyPolicyScreen onBackPress={() => setScreen("homeMyPage")} />;
+  }
+
+  if (screen === "termsOfServiceHomeMyPage") {
+    return <TermsOfServiceScreen onBackPress={() => setScreen("homeMyPage")} />;
   }
 
   if (screen === "notificationsHome") {
