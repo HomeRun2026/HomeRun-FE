@@ -155,9 +155,11 @@ const styles = StyleSheet.create({
   },
   tabBarWrap: {
     alignItems: "center",
-    paddingBottom: 48,
     backgroundColor: homeBackground,
-    position: "relative",
+    left: 0,
+    position: "absolute",
+    right: 0,
+    top: 624,
   },
   tabBarShadow: {
     position: "absolute",
