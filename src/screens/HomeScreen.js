@@ -13,6 +13,7 @@ import { MyPageScreen } from "./MyPageScreen";
 import { colors, layout, typography } from "../theme";
 
 const homeBackground = "#FCFDFE";
+const tabIconSize = 32;
 const topShadowOpacities = [0.01, 0.02, 0.03, 0.04, 0.055, 0.07];
 const bottomShadowOpacities = [0.05, 0.04, 0.03, 0.02, 0.01];
 
@@ -95,7 +96,7 @@ export function HomeScreen({
                   onPress={() => setActiveTab(key)}
                   style={styles.tabItem}
                 >
-                  <Icon height={42} width={42} />
+                  <Icon height={tabIconSize} width={tabIconSize} />
                   <Text
                     style={[styles.tabLabel, selected && styles.tabLabelOn]}
                   >
@@ -176,17 +177,19 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: layout.maxPhoneWidth,
     paddingTop: 16,
-    paddingRight: 58,
+    paddingRight: 38,
     paddingBottom: 14,
-    paddingLeft: 58,
+    paddingLeft: 38,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
+    gap: 22,
     backgroundColor: colors.white,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
   },
   tabItem: {
+    display: "flex",
     width: 80,
     flexDirection: "column",
     alignItems: "center",
