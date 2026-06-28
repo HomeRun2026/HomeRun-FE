@@ -14,6 +14,9 @@ export function Header({
   type = "main",
   title,
   notificationCount = 0,
+  BackIcon,
+  backIconStyle,
+  backButtonStyle,
   headerStyle,
   titleStyle,
   topSpacerStyle,
@@ -59,9 +62,17 @@ export function Header({
               accessibilityRole="button"
               hitSlop={12}
               onPress={onBackPress}
-              style={styles.iconButton}
+              style={[styles.iconButton, backButtonStyle]}
             >
-              <Feather color="#9AA8B7" name="chevron-left" size={26} />
+              {BackIcon ? (
+                <BackIcon
+                  height={24}
+                  style={[styles.backIcon, backIconStyle]}
+                  width={24}
+                />
+              ) : (
+                <Feather color="#9AA8B7" name="chevron-left" size={26} />
+              )}
             </Pressable>
             <Text numberOfLines={1} style={[styles.title, titleStyle]}>
               {title}
@@ -101,6 +112,11 @@ const styles = StyleSheet.create({
     height: 40,
     alignItems: "center",
     justifyContent: "center",
+  },
+  backIcon: {
+    width: 24,
+    height: 24,
+    aspectRatio: 1,
   },
   title: {
     flex: 1,
