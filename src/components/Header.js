@@ -20,6 +20,7 @@ export function Header({
   headerStyle,
   titleStyle,
   topSpacerStyle,
+  showRightPlaceholder = true,
   onBellPress,
   onBackPress,
 }) {
@@ -77,7 +78,7 @@ export function Header({
             <Text numberOfLines={1} style={[styles.title, titleStyle]}>
               {title}
             </Text>
-            <View style={styles.iconButton} />
+            {showRightPlaceholder ? <View style={styles.iconButton} /> : null}
           </>
         )}
       </View>

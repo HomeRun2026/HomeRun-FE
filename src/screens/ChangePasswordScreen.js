@@ -9,9 +9,11 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
 
 import { AppScreen, Header, PrimaryButton } from "../components";
+import BackIcon from "../../assets/images/L.svg";
+import VisibleIcon from "../../assets/images/icon_visible.svg";
+import { colors, layout, typography } from "../theme";
 
 export function ChangePasswordScreen({ onBackPress, onConfirmPress }) {
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -20,7 +22,17 @@ export function ChangePasswordScreen({ onBackPress, onConfirmPress }) {
   return (
     <AppScreen>
       <View style={styles.container}>
-        <Header type="back" title="비밀번호 변경" onBackPress={onBackPress} />
+        <Header
+          type="back"
+          title="비밀번호 변경"
+          BackIcon={BackIcon}
+          backButtonStyle={styles.backButton}
+          backIconStyle={styles.backIcon}
+          headerStyle={styles.headerBox}
+          showRightPlaceholder={false}
+          titleStyle={styles.headerTitle}
+          onBackPress={onBackPress}
+        />
 
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -33,23 +45,29 @@ export function ChangePasswordScreen({ onBackPress, onConfirmPress }) {
             style={styles.scroller}
           >
             <View style={styles.content}>
-              <PasswordInput placeholder="현재 비밀번호" secureTextEntry />
-              <PasswordInput
-                onToggleVisibility={() => setShowNewPassword((value) => !value)}
-                placeholder="새 비밀번호"
-                secureTextEntry={!showNewPassword}
-                withEye
-              />
-              <PasswordInput
-                onToggleVisibility={() =>
-                  setShowNewPasswordConfirm((value) => !value)
-                }
-                placeholder="새 비밀번호 확인"
-                secureTextEntry={!showNewPasswordConfirm}
-                withEye
-              />
+              <View style={styles.currentPasswordGroup}>
+                <PasswordInput placeholder="현재 비밀번호" secureTextEntry />
+              </View>
+              <View style={styles.passwordGroup}>
+                <PasswordInput
+                  onToggleVisibility={() =>
+                    setShowNewPassword((value) => !value)
+                  }
+                  placeholder="새 비밀번호"
+                  secureTextEntry={!showNewPassword}
+                  withEye
+                />
+                <PasswordInput
+                  onToggleVisibility={() =>
+                    setShowNewPasswordConfirm((value) => !value)
+                  }
+                  placeholder="새 비밀번호 확인"
+                  secureTextEntry={!showNewPasswordConfirm}
+                  withEye
+                />
+              </View>
               <Text style={styles.helper}>
-                (영문 대/소문자, 숫자/특수문자 중 2가지 이상 조합, 8~16자)
+                (영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 8자~16자)
               </Text>
             </View>
           </ScrollView>
@@ -69,8 +87,11 @@ function PasswordInput({ onToggleVisibility, style, withEye = false, ...props })
   return (
     <View style={styles.inputWrap}>
       <TextInput
-        placeholderTextColor="#B4C0CC"
+        cursorColor={colors.gray06}
+        placeholderTextColor={colors.gray06}
+        selectionColor={colors.gray06}
         style={[styles.input, withEye && styles.inputWithEye, style]}
+        underlineColorAndroid="transparent"
         {...props}
       />
       {withEye && (
@@ -80,7 +101,7 @@ function PasswordInput({ onToggleVisibility, style, withEye = false, ...props })
           onPress={onToggleVisibility}
           style={styles.eyeButton}
         >
-          <Feather color="#CDD7E1" name="eye" size={22} />
+          <VisibleIcon />
         </Pressable>
       )}
     </View>
@@ -90,7 +111,31 @@ function PasswordInput({ onToggleVisibility, style, withEye = false, ...props })
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F4F7FA",
+    backgroundColor: colors.white,
+  },
+  headerBox: {
+    display: "flex",
+    height: 54,
+    paddingHorizontal: 16,
+    alignItems: "center",
+    gap: 12,
+    justifyContent: "flex-start",
+    alignSelf: "stretch",
+    borderBottomColor: colors.gray03,
+  },
+  headerTitle: {
+    ...typography.head01Sb,
+    marginLeft: 0,
+    color: colors.black,
+  },
+  backButton: {
+    width: 24,
+    height: 24,
+  },
+  backIcon: {
+    width: 24,
+    height: 24,
+    aspectRatio: 1,
   },
   keyboardContainer: {
     flex: 1,
@@ -102,50 +147,77 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   content: {
-    paddingHorizontal: 24,
+    flex: 1,
+    paddingHorizontal: layout.screenMargin,
     paddingTop: 24,
+    paddingBottom: 24,
+  },
+  currentPasswordGroup: {
+    marginBottom: 32,
+  },
+  passwordGroup: {
+    gap: 8,
   },
   inputWrap: {
     justifyContent: "center",
-    marginBottom: 12,
   },
   input: {
-    height: 58,
-    borderRadius: 10,
+    height: 54,
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#E2E8EF",
-    backgroundColor: "#EEF3F7",
+    borderColor: colors.gray03,
+    backgroundColor: colors.gray02,
     paddingHorizontal: 16,
-    fontSize: 16,
-    lineHeight: 22,
-    fontWeight: "600",
-    color: "#45515E",
+    color: colors.gray06,
+    ...Platform.select({
+      web: {
+        outlineColor: "transparent",
+        outlineStyle: "none",
+        outlineWidth: 0,
+        boxShadow: "none",
+      },
+    }),
+    ...typography.body01Sb,
+    fontStyle: "normal",
+    letterSpacing: -0.16,
+    textAlign: "left",
   },
   inputWithEye: {
-    paddingRight: 56,
+    paddingRight: 58,
   },
   eyeButton: {
     position: "absolute",
-    right: 14,
-    width: 28,
-    height: 28,
+    right: 16,
+    width: 24,
+    height: 24,
     alignItems: "center",
     justifyContent: "center",
   },
   helper: {
-    marginTop: -2,
-    fontSize: 14,
-    lineHeight: 20,
+    marginTop: 8,
+    fontFamily: typography.caption01M.fontFamily,
+    fontSize: 12,
+    fontStyle: "normal",
     fontWeight: "500",
-    color: "#A3B1BF",
+    lineHeight: 19.2,
+    letterSpacing: -0.12,
+    color: colors.gray06,
   },
   footer: {
-    paddingHorizontal: 24,
-    paddingBottom: 28,
+    paddingHorizontal: layout.screenMargin,
+    paddingBottom: 64,
+    alignItems: "center",
   },
   confirmButton: {
-    height: 58,
-    borderRadius: 29,
-    backgroundColor: "#33D878",
+    display: "flex",
+    width: 328,
+    maxWidth: "100%",
+    height: 54,
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    borderRadius: 8,
+    backgroundColor: colors.main,
   },
 });
