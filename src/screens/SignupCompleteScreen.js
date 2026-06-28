@@ -1,39 +1,40 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { AppScreen, Header, PrimaryButton } from "../components";
+import { AppScreen, PrimaryButton } from "../components";
 import { colors, layout, typography } from "../theme";
 
-export function SignupCompleteScreen({ onBackPress, onHomePress, onLoginPress }) {
+export function SignupCompleteScreen({ onHomePress, onLoginPress }) {
   return (
     <AppScreen>
-      <Header type="back" title="회원가입" onBackPress={onBackPress} />
+      <View style={styles.completeBox}>
+        <View style={styles.container}>
+          <View style={styles.content}>
+            <View style={styles.messageBox}>
+              <Text style={styles.title}>회원가입이 완료되었어요!</Text>
+              <Text style={styles.description}>
+                홈런에 오신 걸 환영합니다.
+                {"\n"}
+                지금 바로 다양한 서비스를 이용해 보세요!
+              </Text>
+            </View>
 
-      <View style={styles.container}>
-        <View style={styles.content}>
-          <Text style={styles.title}>회원가입이 완료되었어요!</Text>
-          <Text style={styles.description}>
-            홈런이 당신을 기다리고 있습니다.
-            {"\n"}
-            지금 바로 다양한 서비스를 이용해 보세요.
-          </Text>
+            <View style={styles.graphicPlaceholder} />
+          </View>
 
-          <View style={styles.graphicPlaceholder} />
-          <Text style={styles.graphicGuide}>(그래픽 추후 추가)</Text>
-        </View>
+          <View style={styles.footer}>
+            <PrimaryButton
+              onPress={onLoginPress}
+              style={styles.loginButton}
+              textStyle={styles.loginButtonText}
+            >
+              로그인하기
+            </PrimaryButton>
 
-        <View style={styles.footer}>
-          <PrimaryButton
-            onPress={onLoginPress}
-            style={styles.loginButton}
-            textStyle={styles.loginButtonText}
-          >
-            로그인하기
-          </PrimaryButton>
-
-          <Pressable onPress={onHomePress} style={styles.homeButton}>
-            <Text style={styles.homeButtonText}>홈으로</Text>
-          </Pressable>
+            <Pressable onPress={onHomePress} style={styles.homeButton}>
+              <Text style={styles.homeButtonText}>홈으로</Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     </AppScreen>
@@ -41,61 +42,97 @@ export function SignupCompleteScreen({ onBackPress, onHomePress, onLoginPress })
 }
 
 const styles = StyleSheet.create({
+  completeBox: {
+    width: 360,
+    height: 800,
+    maxWidth: "100%",
+    maxHeight: "100%",
+    alignSelf: "center",
+    borderRadius: 16,
+    overflow: "hidden",
+    backgroundColor: colors.white,
+  },
   container: {
     flex: 1,
     paddingHorizontal: layout.screenMargin,
-    paddingBottom: 48,
+    paddingBottom: 52,
     justifyContent: "space-between",
   },
   content: {
     alignItems: "center",
-    paddingTop: 86,
-  },
-  title: {
-    ...typography.head01Sb,
-    color: colors.gray09,
-    textAlign: "center",
-  },
-  description: {
-    marginTop: 26,
-    ...typography.body01R,
-    color: colors.gray07,
-    textAlign: "center",
   },
   graphicPlaceholder: {
-    marginTop: 58,
     width: "78%",
     maxWidth: 320,
     aspectRatio: 1,
+    marginTop: 40,
     borderRadius: 160,
     backgroundColor: colors.gray03,
   },
-  graphicGuide: {
-    marginTop: 32,
-    ...typography.body01R,
-    color: "#FF6565",
-  },
-  footer: {
+  messageBox: {
+    marginTop: 152,
+    alignItems: "center",
     gap: 20,
   },
+  title: {
+    fontFamily: "SUIT",
+    fontSize: 20,
+    fontStyle: "normal",
+    fontWeight: "600",
+    lineHeight: 20,
+    letterSpacing: -0.2,
+    color: colors.black,
+    textAlign: "center",
+  },
+  description: {
+    fontFamily: "SUIT",
+    fontSize: 13,
+    fontStyle: "normal",
+    fontWeight: "500",
+    lineHeight: 18.2,
+    letterSpacing: -0.13,
+    color: colors.gray08,
+    textAlign: "center",
+  },
+  footer: {
+    gap: 12,
+  },
   loginButton: {
-    height: 58,
-    borderRadius: 29,
+    height: 54,
+    padding: 10,
+    alignSelf: "stretch",
+    gap: 10,
+    borderRadius: 8,
     backgroundColor: colors.main,
   },
   loginButtonText: {
-    ...typography.head01Sb,
+    fontFamily: "SUIT",
+    fontSize: 16,
+    fontStyle: "normal",
+    fontWeight: "600",
+    lineHeight: 22.4,
+    letterSpacing: -0.16,
     color: colors.white,
+    textAlign: "center",
   },
   homeButton: {
-    height: 58,
-    borderRadius: 29,
+    height: 54,
+    padding: 10,
+    alignSelf: "stretch",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.gray05,
+    gap: 10,
+    borderRadius: 8,
+    backgroundColor: colors.gray04,
   },
   homeButtonText: {
-    ...typography.head01Sb,
+    fontFamily: "SUIT",
+    fontSize: 16,
+    fontStyle: "normal",
+    fontWeight: "600",
+    lineHeight: 22.4,
+    letterSpacing: -0.16,
     color: colors.gray07,
+    textAlign: "center",
   },
 });
