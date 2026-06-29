@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from "react";
+﻿import React, { useMemo, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 
+import { agreeToSignupTerms } from "../../api/auth/consent";
+import { signup } from "../../api/auth/signup";
 import { AppScreen, Header, PrimaryButton } from "../components";
-import { buildApiUrl } from "../config/api";
 import { colors, layout, typography } from "../theme";
 
 const TERMS = [
@@ -81,25 +82,26 @@ export function TermsAgreementScreen({
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(buildApiUrl("/api/auth/signup"), {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: signupForm.email,
-          nickname: signupForm.nickname,
-          password: signupForm.password,
-        }),
+      const signupResponse = await signup({
+        email: signupForm.email,
+        nickname: signupForm.nickname,
+        password: signupForm.password,
+        passwordConfirm: signupForm.passwordConfirm,
+      });
+      const accessToken = signupResponse?.data?.accessToken;
+
+      await agreeToSignupTerms({
+        serviceTermsAgreement: checkedMap.service,
+        serviceInfoAgreement: checkedMap.privacy,
+        accessToken,
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to signup");
-      }
-
       onConfirmPress?.();
-    } catch {
-      Alert.alert("회원가입", "회원가입 요청에 실패했습니다. 다시 시도해 주세요.");
+    } catch (error) {
+      Alert.alert(
+        "회원가입",
+        error?.message ?? "회원가입 요청에 실패했습니다. 다시 시도해 주세요.",
+      );
     } finally {
       setIsSubmitting(false);
     }

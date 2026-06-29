@@ -6,15 +6,24 @@ import KakaoTalkLogo from "../../assets/images/kakaotalk.svg";
 import NaverLogo from "../../assets/images/naver.svg";
 import { colors } from "../theme";
 
-export function SocialLoginButtons() {
+export function SocialLoginButtons({ isGoogleLoading = false, onGooglePress }) {
   return (
     <View style={styles.socials}>
-      <Pressable accessibilityLabel="구글로 로그인" style={styles.google}>
+      <Pressable
+        accessibilityLabel="구글로 로그인"
+        accessibilityRole="button"
+        accessibilityState={{ disabled: isGoogleLoading }}
+        disabled={isGoogleLoading}
+        onPress={onGooglePress}
+        style={[styles.google, isGoogleLoading && styles.disabled]}
+      >
         <GoogleLogo height={32} width={32} />
       </Pressable>
+
       <Pressable accessibilityLabel="네이버로 로그인" style={styles.naver}>
         <NaverLogo height={32} width={32} />
       </Pressable>
+
       <Pressable accessibilityLabel="카카오로 로그인" style={styles.kakao}>
         <KakaoTalkLogo height={34} width={34} />
       </Pressable>
@@ -55,5 +64,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.kakao,
     alignItems: "center",
     justifyContent: "center",
+  },
+  disabled: {
+    opacity: 0.6,
   },
 });

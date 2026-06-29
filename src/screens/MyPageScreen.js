@@ -3,8 +3,8 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
 import packageJson from "../../package.json";
+import { getMyPage } from "../../api/mypage";
 import { AppScreen, Header } from "../components";
-import { buildApiUrl } from "../config/api";
 
 const defaultMyPageInfo = {
   appVersion: packageJson.version,
@@ -39,13 +39,7 @@ export function MyPageScreen({
 
     async function loadMyPageInfo() {
       try {
-        const response = await fetch(buildApiUrl("/api/mypage"));
-
-        if (!response.ok) {
-          throw new Error("Failed to load mypage");
-        }
-
-        const data = await response.json();
+        const data = await getMyPage();
 
         if (!isActive) {
           return;
