@@ -160,10 +160,10 @@ const styles = StyleSheet.create({
   tabBarWrap: {
     alignItems: "center",
     backgroundColor: homeBackground,
+    bottom: 26,
     left: 0,
     position: "absolute",
     right: 0,
-    top: 624,
   },
   tabBarShadow: {
     position: "absolute",
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 16,
   },
   bottomShadow: {
-    top: 101,
+    top: 111,
   },
   shadowStrip: {
     flex: 1,
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     maxWidth: layout.maxPhoneWidth,
     paddingTop: 16,
     paddingRight: 38,
-    paddingBottom: 14,
+    paddingBottom: 24,
     paddingLeft: 38,
     flexDirection: "row",
     alignItems: "center",
