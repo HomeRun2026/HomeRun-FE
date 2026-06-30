@@ -1,5 +1,5 @@
-import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
 import BellIcon from "../../assets/images/icon_bell.svg";
 import BellNoneIcon from "../../assets/images/icon_bell_none.svg";
@@ -44,7 +44,20 @@ export function MyPageScreen({
   onOpenPrivacy,
   onOpenTerms,
 }) {
+  const [withdrawStep, setWithdrawStep] = useState(null);
   const HeaderBellIcon = notificationCount > 0 ? BellIcon : BellNoneIcon;
+
+  const openWithdrawConfirm = () => {
+    setWithdrawStep("confirm");
+  };
+
+  const closeWithdrawModal = () => {
+    setWithdrawStep(null);
+  };
+
+  const handleWithdrawPress = () => {
+    setWithdrawStep("complete");
+  };
 
   const handleMenuPress = (menuKey) => {
     if (menuKey === "nickname") {
@@ -144,30 +157,99 @@ export function MyPageScreen({
           </View>
         </View>
 
-          <View style={styles.bottomActions}>
-            <View style={styles.accountActions}>
-              <Pressable style={styles.logoutButton}>
-                <Text style={styles.logoutButtonText}>로그아웃</Text>
-              </Pressable>
+        <View style={styles.bottomActions}>
+          <View style={styles.accountActions}>
+            <Pressable style={styles.logoutButton}>
+              <Text style={styles.logoutButtonText}>로그아웃</Text>
+            </Pressable>
 
-              <Pressable>
-                <Text style={styles.withdrawText}>회원 탈퇴</Text>
-              </Pressable>
-            </View>
-
-            <Pressable style={styles.versionButton}>
-              <Text style={styles.versionText}>{`앱 버전 ${appVersion}`}</Text>
+            <Pressable
+              accessibilityRole="button"
+              onPress={openWithdrawConfirm}
+            >
+              <Text style={styles.withdrawText}>회원 탈퇴</Text>
             </Pressable>
           </View>
+
+          <Pressable style={styles.versionButton}>
+            <Text style={styles.versionText}>{`앱 버전 ${appVersion}`}</Text>
+          </Pressable>
+        </View>
       </View>
     </View>
   );
 
-  if (embedded) {
-    return content;
-  }
+  const screen = embedded ? content : <AppScreen>{content}</AppScreen>;
 
-  return <AppScreen>{content}</AppScreen>;
+  return (
+    <>
+      {screen}
+      <Modal
+        animationType="fade"
+        onRequestClose={closeWithdrawModal}
+        transparent
+        visible={withdrawStep !== null}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            {withdrawStep === "confirm" ? (
+              <>
+                <Text style={styles.modalTitle}>회원 탈퇴를 진행할까요?</Text>
+                <Text style={styles.modalDescription}>
+                  회원 탈퇴 시 개인정보는 관련 법령에 따라 파기되며,{"\n"}
+                  서비스 이용 기록, 포인트, 쿠폰 등은 복구가 불가능합니다.{"\n"}
+                  또한, 동일한 정보로 재가입이 제한될 수 있습니다.
+                </Text>
+                <View style={styles.modalActions}>
+                  <Pressable
+                    accessibilityRole="button"
+                    onPress={closeWithdrawModal}
+                    style={styles.cancelButton}
+                  >
+                    <Text style={[styles.modalButtonText, styles.cancelText]}>
+                      취소
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    accessibilityRole="button"
+                    onPress={handleWithdrawPress}
+                    style={styles.withdrawButton}
+                  >
+                    <Text
+                      style={[
+                        styles.modalButtonText,
+                        styles.withdrawButtonText,
+                      ]}
+                    >
+                      탈퇴
+                    </Text>
+                  </Pressable>
+                </View>
+              </>
+            ) : (
+              <>
+                <Text style={styles.modalTitle}>회원 탈퇴가 완료되었습니다.</Text>
+                <Text style={styles.modalDescription}>
+                  전자상거래 등 관련 법령에 따라 거래 내역은{"\n"}
+                  일정 기간 보관될 수 있습니다.{"\n"}
+                  그동안 서비스를 이용해주셔서 진심으로 감사드립니다.
+                </Text>
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={closeWithdrawModal}
+                  style={styles.completeButton}
+                >
+                  <Text style={[styles.modalButtonText, styles.completeText]}>
+                    확인
+                  </Text>
+                </Pressable>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
+    </>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -312,5 +394,113 @@ const styles = StyleSheet.create({
     ...typography.caption01Underline,
     color: colors.gray07,
     textDecorationLine: "underline",
+  },
+  modalOverlay: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    backgroundColor: "rgba(52, 56, 59, 0.32)",
+  },
+  modalCard: {
+    width: 328,
+    paddingTop: 24,
+    paddingHorizontal: 24,
+    paddingBottom: 16,
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 12,
+    rowGap: 12,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.gray03,
+    backgroundColor: colors.white,
+    shadowColor: "#B9C8D0",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    boxShadow: "0 0 20px rgba(185, 200, 208, 0.15)",
+    elevation: 3,
+  },
+  modalTitle: {
+    width: "100%",
+    fontFamily: typography.body01Sb.fontFamily,
+    fontSize: 16,
+    fontStyle: "normal",
+    fontWeight: "600",
+    lineHeight: 22.4,
+    letterSpacing: -0.16,
+    color: colors.gray09,
+    textAlign: "center",
+  },
+  modalDescription: {
+    width: "100%",
+    fontFamily: typography.caption02M.fontFamily,
+    fontSize: 11,
+    fontStyle: "normal",
+    fontWeight: "500",
+    lineHeight: 15.4,
+    letterSpacing: -0.11,
+    color: colors.gray07,
+    textAlign: "center",
+  },
+  modalActions: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+  },
+  modalButton: {
+    width: 134,
+    height: 61,
+    borderRadius: 31,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalButtonText: {
+    fontFamily: typography.body03M.fontFamily,
+    fontSize: 13,
+    fontStyle: "normal",
+    fontWeight: "500",
+    lineHeight: 18.2,
+    letterSpacing: -0.13,
+    textAlign: "center",
+  },
+  cancelButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 28,
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    backgroundColor: colors.gray04,
+  },
+  cancelText: {
+    color: colors.gray07,
+  },
+  withdrawButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 28,
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    backgroundColor: colors.main,
+  },
+  withdrawButtonText: {
+    color: colors.white,
+  },
+  completeButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 28,
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    backgroundColor: colors.gray04,
+  },
+  completeText: {
+    color: colors.gray07,
   },
 });
