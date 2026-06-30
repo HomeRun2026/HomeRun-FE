@@ -8,6 +8,8 @@ import {
   SocialLoginButtons,
 } from "../components";
 import HomerunLogo from "../../assets/images/homerun_logo.svg";
+import HiddenIcon from "../../assets/images/icon_password_hidden.svg";
+import VisibleIcon from "../../assets/images/icon_visible.svg";
 import { colors, layout, typography } from "../theme";
 
 export function LoginScreen({
@@ -16,6 +18,7 @@ export function LoginScreen({
   onFindPasswordPress,
 }) {
   const [remember, setRemember] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const handleLoginPress = () => {
     onLoginPress?.();
   };
@@ -43,11 +46,12 @@ export function LoginScreen({
             keyboardType="email-address"
             placeholder="이메일"
           />
-          <FormTextInput
+          <PasswordInput
             autoCapitalize="none"
             autoComplete="password"
+            onToggleVisibility={() => setShowPassword((value) => !value)}
             placeholder="비밀번호"
-            secureTextEntry
+            secureTextEntry={!showPassword}
           />
           <PrimaryButton
             onPress={handleLoginPress}
@@ -102,6 +106,34 @@ export function LoginScreen({
   );
 }
 
+function PasswordInput({
+  onToggleVisibility,
+  secureTextEntry,
+  style,
+  ...props
+}) {
+  const VisibilityIcon = secureTextEntry ? HiddenIcon : VisibleIcon;
+
+  return (
+    <View style={styles.passwordInputWrap}>
+      <FormTextInput
+        secureTextEntry={secureTextEntry}
+        style={[styles.passwordInput, style]}
+        {...props}
+      />
+      <Pressable
+        accessibilityLabel={secureTextEntry ? "비밀번호 보기" : "비밀번호 숨기기"}
+        accessibilityRole="button"
+        hitSlop={8}
+        onPress={onToggleVisibility}
+        style={styles.eyeButton}
+      >
+        <VisibilityIcon />
+      </Pressable>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   content: {
     flex: 1,
@@ -114,6 +146,20 @@ const styles = StyleSheet.create({
   },
   form: {
     gap: 8,
+  },
+  passwordInputWrap: {
+    justifyContent: "center",
+  },
+  passwordInput: {
+    paddingRight: 58,
+  },
+  eyeButton: {
+    position: "absolute",
+    right: 16,
+    width: 24,
+    height: 24,
+    alignItems: "center",
+    justifyContent: "center",
   },
   loginButton: {
     display: "flex",

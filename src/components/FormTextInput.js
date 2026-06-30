@@ -3,12 +3,12 @@ import { StyleSheet, TextInput } from "react-native";
 
 import { colors, typography } from "../theme";
 
-export function FormTextInput(props) {
+export function FormTextInput({ style, ...props }) {
   return (
     <TextInput
       placeholderTextColor={colors.gray06}
       selectionColor={colors.gray06}
-      style={styles.input}
+      style={[styles.input, style]}
       {...props}
     />
   );
