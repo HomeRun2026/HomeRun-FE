@@ -1,7 +1,10 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
+import BackIcon from "../../assets/images/L.svg";
+import SettingIcon from "../../assets/images/setting.svg";
 import { AppScreen, Header } from "../components";
+import { colors, typography } from "../theme";
 
 const DEFAULT_NOTIFICATIONS = [
   {
@@ -33,11 +36,32 @@ export function NotificationsScreen({
   notifications = DEFAULT_NOTIFICATIONS,
   onBackPress,
   onNotificationPress,
+  onSettingsPress,
 }) {
   return (
     <AppScreen>
       <View style={styles.container}>
-        <Header type="back" title="알림" onBackPress={onBackPress} />
+        <Header
+          type="back"
+          title="알림"
+          BackIcon={BackIcon}
+          backButtonStyle={styles.backButton}
+          backIconStyle={styles.backIcon}
+          headerStyle={styles.headerBox}
+          rightAccessory={
+            <Pressable
+              accessibilityLabel="알림 설정"
+              accessibilityRole="button"
+              hitSlop={12}
+              onPress={onSettingsPress}
+              style={styles.settingButton}
+            >
+              <SettingIcon height={24} width={24} />
+            </Pressable>
+          }
+          titleStyle={styles.headerTitle}
+          onBackPress={onBackPress}
+        />
 
         <View style={styles.list}>
           {notifications.map((item) => {
@@ -87,28 +111,62 @@ export function NotificationsScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F4F7FA",
+    backgroundColor: colors.white,
+  },
+  headerBox: {
+    display: "flex",
+    height: 54,
+    paddingHorizontal: 16,
+    alignItems: "center",
+    gap: 12,
+    alignSelf: "stretch",
+    borderBottomColor: colors.gray03,
+  },
+  headerTitle: {
+    ...typography.head01Sb,
+    marginLeft: 0,
+    color: colors.black,
+  },
+  backButton: {
+    width: 24,
+    height: 24,
+  },
+  backIcon: {
+    width: 24,
+    height: 24,
+    aspectRatio: 1,
+  },
+  settingButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 24,
+    height: 24,
   },
   list: {
-    paddingHorizontal: 18,
+    paddingHorizontal: 16,
     paddingTop: 16,
     gap: 14,
   },
   card: {
+    width: 328,
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 8,
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 20,
+    justifyContent: "space-between",
   },
   cardSuccess: {
-    backgroundColor: "#D8EDDD",
-    borderColor: "#BFE4C8",
+    alignItems: "center",
+    backgroundColor: colors.sub,
+    borderColor: "#CAF9DA",
   },
   cardDanger: {
-    backgroundColor: "#F7E7E9",
-    borderColor: "#EFD3D7",
+    alignItems: "flex-start",
+    backgroundColor: "#FFEFEF",
+    borderColor: "#FFE3E3",
   },
   cardTopRow: {
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -123,7 +181,7 @@ const styles = StyleSheet.create({
     width: 15,
     height: 15,
     borderRadius: 8,
-    marginRight: 10,
+    marginRight: 12,
   },
   dotSuccess: {
     backgroundColor: "#35C777",
@@ -132,17 +190,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#F4666D",
   },
   cardTitle: {
-    flex: 1,
-    fontSize: 17,
-    lineHeight: 24,
-    fontWeight: "600",
-    color: "#2E3338",
+    ...typography.body02M,
+    color: colors.gray09,
+    fontStyle: "normal",
+    letterSpacing: -0.14,
+    textAlign: "left",
   },
   cardTime: {
-    fontSize: 14,
-    lineHeight: 20,
+    minWidth: 28,
+    fontFamily: "SUIT",
+    fontSize: 12,
+    fontStyle: "normal",
+    lineHeight: 19.2,
     fontWeight: "500",
-    color: "#92A0AE",
+    color: colors.gray07,
+    letterSpacing: -0.12,
+    textAlign: "center",
   },
   cardDescription: {
     marginTop: 8,
@@ -153,6 +216,12 @@ const styles = StyleSheet.create({
     color: "#7F8B97",
   },
   cardDescriptionDanger: {
-    color: "#F26E75",
+    color: colors.point,
+    fontFamily: "SUIT",
+    fontSize: 11,
+    fontStyle: "normal",
+    fontWeight: "500",
+    lineHeight: 15.4,
+    letterSpacing: -0.11,
   },
 });

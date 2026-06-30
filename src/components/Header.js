@@ -18,6 +18,7 @@ export function Header({
   backIconStyle,
   backButtonStyle,
   headerStyle,
+  rightAccessory,
   titleStyle,
   topSpacerStyle,
   showRightPlaceholder = true,
@@ -83,7 +84,11 @@ export function Header({
             <Text numberOfLines={1} style={[styles.title, titleStyle]}>
               {title}
             </Text>
-            {showRightPlaceholder ? (
+            {rightAccessory ? (
+              <View style={[styles.iconButton, styles.backIconButton]}>
+                {rightAccessory}
+              </View>
+            ) : showRightPlaceholder ? (
               <View style={[styles.iconButton, styles.backIconButton]} />
             ) : null}
           </>
