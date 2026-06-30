@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -19,10 +20,34 @@ import { colors, layout, typography } from "../theme";
 export function SignupScreen({ onBackPress, onNextPress }) {
   const [email, setEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [nickname, setNickname] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const isEmailEntered = email.trim().length > 0;
   const isVerificationCodeEntered = verificationCode.trim().length > 0;
+
+  const handleNextPress = () => {
+    const trimmedEmail = email.trim();
+    const trimmedNickname = nickname.trim();
+
+    if (!trimmedEmail || !password || !passwordConfirm || !trimmedNickname) {
+      Alert.alert("회원가입", "필수 정보를 모두 입력해 주세요.");
+      return;
+    }
+
+    if (password !== passwordConfirm) {
+      Alert.alert("회원가입", "비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    onNextPress?.({
+      email: trimmedEmail,
+      nickname: trimmedNickname,
+      password,
+    });
+  };
 
   return (
     <AppScreen>
@@ -77,20 +102,24 @@ export function SignupScreen({ onBackPress, onNextPress }) {
               <PasswordInput
                 autoCapitalize="none"
                 autoComplete="password"
+                onChangeText={setPassword}
                 onToggleVisibility={() => setShowPassword((value) => !value)}
                 placeholder="비밀번호 *"
                 secureTextEntry={!showPassword}
                 style={styles.stretchInput}
+                value={password}
               />
               <PasswordInput
                 autoCapitalize="none"
                 autoComplete="password"
+                onChangeText={setPasswordConfirm}
                 onToggleVisibility={() =>
                   setShowPasswordConfirm((value) => !value)
                 }
                 placeholder="비밀번호 확인 *"
                 secureTextEntry={!showPasswordConfirm}
                 style={styles.stretchInput}
+                value={passwordConfirm}
               />
             </View>
 
@@ -99,8 +128,10 @@ export function SignupScreen({ onBackPress, onNextPress }) {
             </Text>
 
             <SignupInput
+              onChangeText={setNickname}
               placeholder="닉네임 *"
               style={[styles.stretchInput, styles.nicknameInput]}
+              value={nickname}
             />
           </View>
         </ScrollView>
@@ -108,7 +139,7 @@ export function SignupScreen({ onBackPress, onNextPress }) {
 
       <View style={styles.footer}>
         <PrimaryButton
-          onPress={onNextPress}
+          onPress={handleNextPress}
           style={styles.nextButton}
           textStyle={styles.nextText}
         >

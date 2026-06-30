@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
 import BellIcon from "../../assets/images/icon_bell.svg";
@@ -13,8 +13,13 @@ import RightIcon from "../../assets/images/R.svg";
 import packageJson from "../../package.json";
 import { AppScreen } from "../components";
 import { colors, layout, typography } from "../theme";
+import { buildApiUrl } from "../config/api";
 
-const appVersion = packageJson.version;
+const defaultMyPageInfo = {
+  appVersion: packageJson.version,
+  email: "abcdg@gmail.com",
+  nickname: "홍길동",
+};
 
 const ACCOUNT_ITEMS = [
   { key: "nickname", label: "닉네임 변경", Icon: PenIcon },
@@ -45,7 +50,44 @@ export function MyPageScreen({
   onOpenTerms,
 }) {
   const [withdrawStep, setWithdrawStep] = useState(null);
+  const [myPageInfo, setMyPageInfo] = useState(defaultMyPageInfo);
   const HeaderBellIcon = notificationCount > 0 ? BellIcon : BellNoneIcon;
+
+  useEffect(() => {
+    let isActive = true;
+
+    async function loadMyPageInfo() {
+      try {
+        const response = await fetch(buildApiUrl("/api/mypage"));
+
+        if (!response.ok) {
+          throw new Error("Failed to load mypage");
+        }
+
+        const data = await response.json();
+
+        if (!isActive) {
+          return;
+        }
+
+        setMyPageInfo({
+          appVersion: data.appVersion ?? defaultMyPageInfo.appVersion,
+          email: data.email ?? defaultMyPageInfo.email,
+          nickname: data.nickname ?? defaultMyPageInfo.nickname,
+        });
+      } catch {
+        if (isActive) {
+          setMyPageInfo(defaultMyPageInfo);
+        }
+      }
+    }
+
+    loadMyPageInfo();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
 
   const openWithdrawConfirm = () => {
     setWithdrawStep("confirm");
@@ -109,8 +151,8 @@ export function MyPageScreen({
         <View style={styles.contentGroup}>
           <View style={styles.card}>
             <View style={styles.profileTextWrap}>
-              <Text style={styles.profileName}>홈런</Text>
-              <Text style={styles.profileEmail}>abcdg@gmail.com</Text>
+              <Text style={styles.profileName}>{`${myPageInfo.nickname}님`}</Text>
+              <Text style={styles.profileEmail}>{myPageInfo.email}</Text>
             </View>
 
             {ACCOUNT_ITEMS.map((item, index) => (
@@ -172,7 +214,9 @@ export function MyPageScreen({
           </View>
 
           <Pressable style={styles.versionButton}>
-            <Text style={styles.versionText}>{`앱 버전 ${appVersion}`}</Text>
+            <Text style={styles.versionText}>
+              {`앱 버전 ${myPageInfo.appVersion}`}
+            </Text>
           </Pressable>
         </View>
       </View>

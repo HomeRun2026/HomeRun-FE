@@ -20,12 +20,16 @@ import {
 export default function App() {
   const [screen, setScreen] = useState("login");
   const [selectedNotice, setSelectedNotice] = useState(null);
+  const [signupForm, setSignupForm] = useState(null);
 
   if (screen === "signup") {
     return (
       <SignupScreen
         onBackPress={() => setScreen("login")}
-        onNextPress={() => setScreen("termsAgreement")}
+        onNextPress={(form) => {
+          setSignupForm(form);
+          setScreen("termsAgreement");
+        }}
       />
     );
   }
@@ -34,6 +38,7 @@ export default function App() {
     return (
       <TermsAgreementScreen
         onBackPress={() => setScreen("signup")}
+        signupForm={signupForm}
         onConfirmPress={() => setScreen("signupComplete")}
       />
     );

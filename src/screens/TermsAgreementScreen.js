@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useMemo, useState } from "react";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 
 import BackIcon from "../../assets/images/L.svg";
 import CheckboxFillIcon from "../../assets/images/Checkbox_fill.svg";
@@ -7,6 +7,7 @@ import CheckboxIcon from "../../assets/images/Checkbox.svg";
 import DownIcon from "../../assets/images/Down.svg";
 import UpIcon from "../../assets/images/Up.svg";
 import { AppScreen, Header, PrimaryButton } from "../components";
+import { buildApiUrl } from "../config/api";
 import { colors, layout, typography } from "../theme";
 
 const TERMS = [
@@ -24,16 +25,25 @@ const TERMS = [
   },
 ];
 
-export function TermsAgreementScreen({ onBackPress, onConfirmPress }) {
+export function TermsAgreementScreen({
+  onBackPress,
+  onConfirmPress,
+  signupForm,
+}) {
   const [checkedMap, setCheckedMap] = useState({
     service: false,
     privacy: false,
   });
-  const [allAgreeChecked, setAllAgreeChecked] = useState(false);
   const [expandedMap, setExpandedMap] = useState({
     service: false,
     privacy: false,
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const allChecked = useMemo(
+    () => TERMS.every((term) => checkedMap[term.id]),
+    [checkedMap],
+  );
 
   const toggleCheck = (id) => {
     setCheckedMap((prev) => ({
@@ -50,9 +60,8 @@ export function TermsAgreementScreen({ onBackPress, onConfirmPress }) {
   };
 
   const toggleAll = () => {
-    const nextChecked = !allAgreeChecked;
+    const nextChecked = !allChecked;
 
-    setAllAgreeChecked(nextChecked);
     setCheckedMap(() =>
       TERMS.reduce(
         (acc, term) => ({
@@ -62,6 +71,45 @@ export function TermsAgreementScreen({ onBackPress, onConfirmPress }) {
         {},
       ),
     );
+  };
+
+  const handleConfirmPress = async () => {
+    if (!allChecked) {
+      Alert.alert("회원가입", "필수 약관에 모두 동의해 주세요.");
+      return;
+    }
+
+    if (!signupForm) {
+      Alert.alert("회원가입", "회원가입 정보를 다시 입력해 주세요.");
+      onBackPress?.();
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(buildApiUrl("/api/auth/signup"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: signupForm.email,
+          nickname: signupForm.nickname,
+          password: signupForm.password,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to signup");
+      }
+
+      onConfirmPress?.();
+    } catch {
+      Alert.alert("회원가입", "회원가입 요청에 실패했습니다. 다시 시도해 주세요.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -133,7 +181,7 @@ export function TermsAgreementScreen({ onBackPress, onConfirmPress }) {
 
             <Pressable
               accessibilityRole="checkbox"
-              accessibilityState={{ checked: allAgreeChecked }}
+              accessibilityState={{ checked: allChecked }}
               onPress={toggleAll}
               style={styles.allAgreeButton}
             >
@@ -141,18 +189,22 @@ export function TermsAgreementScreen({ onBackPress, onConfirmPress }) {
                 style={[
                   styles.check,
                   styles.allAgreeCheck,
-                  allAgreeChecked && styles.checkOn,
+                  allChecked && styles.checkOn,
                 ]}
               />
               <Text style={styles.allAgreeText}>전체 동의</Text>
             </Pressable>
 
             <PrimaryButton
-              onPress={onConfirmPress}
-              style={styles.confirmButton}
+              disabled={isSubmitting}
+              onPress={handleConfirmPress}
+              style={[
+                styles.confirmButton,
+                isSubmitting && styles.confirmButtonDisabled,
+              ]}
               textStyle={styles.confirmText}
             >
-              확인
+              {isSubmitting ? "처리 중" : "완료"}
             </PrimaryButton>
           </View>
         </View>
@@ -335,5 +387,8 @@ const styles = StyleSheet.create({
     letterSpacing: -0.16,
     textAlign: "center",
     color: "#FFF",
+  },
+  confirmButtonDisabled: {
+    backgroundColor: colors.gray05,
   },
 });
