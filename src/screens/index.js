@@ -9,6 +9,7 @@ export { NoticeDetailScreen } from "./NoticeDetailScreen";
 export { MyPageScreen } from "./MyPageScreen";
 export { NoticesScreen } from "./NoticesScreen";
 export { NotificationsScreen } from "./NotificationsScreen";
+export { PrivacyPolicyScreen } from "./PrivacyPolicyScreen";
 export { SignupScreen } from "./SignupScreen";
 export { SignupCompleteScreen } from "./SignupCompleteScreen";
 export { TermsAgreementScreen } from "./TermsAgreementScreen";

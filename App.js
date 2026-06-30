@@ -10,9 +10,11 @@ import {
   NoticeDetailScreen,
   NoticesScreen,
   NotificationsScreen,
+  PrivacyPolicyScreen,
   SignupCompleteScreen,
   SignupScreen,
   TermsAgreementScreen,
+  TermsOfServiceScreen,
 } from "./src/screens";
 
 export default function App() {
@@ -59,6 +61,9 @@ export default function App() {
         onOpenContact={() => setScreen("inquiryHomeMyPage")}
         onOpenNotices={() => setScreen("noticesHomeMyPage")}
         onOpenNotifications={() => setScreen("notificationsHome")}
+        onOpenPassword={() => setScreen("changePasswordHomeMyPage")}
+        onOpenPrivacy={() => setScreen("privacyPolicyHomeMyPage")}
+        onOpenTerms={() => setScreen("termsOfServiceHomeMyPage")}
       />
     );
   }
@@ -71,6 +76,9 @@ export default function App() {
         onOpenContact={() => setScreen("inquiryHomeMyPage")}
         onOpenNotices={() => setScreen("noticesHomeMyPage")}
         onOpenNotifications={() => setScreen("notificationsHomeMyPage")}
+        onOpenPassword={() => setScreen("changePasswordHomeMyPage")}
+        onOpenPrivacy={() => setScreen("privacyPolicyHomeMyPage")}
+        onOpenTerms={() => setScreen("termsOfServiceHomeMyPage")}
       />
     );
   }
@@ -100,6 +108,14 @@ export default function App() {
     );
   }
 
+  if (screen === "privacyPolicyHomeMyPage") {
+    return <PrivacyPolicyScreen onBackPress={() => setScreen("homeMyPage")} />;
+  }
+
+  if (screen === "termsOfServiceHomeMyPage") {
+    return <TermsOfServiceScreen onBackPress={() => setScreen("homeMyPage")} />;
+  }
+
   if (screen === "notificationsHome") {
     return <NotificationsScreen onBackPress={() => setScreen("home")} />;
   }
@@ -112,7 +128,7 @@ export default function App() {
     return (
       <AccountInfoScreen
         onBackPress={() => setScreen("homeMyPage")}
-        onPasswordPress={() => setScreen("changePassword")}
+        onConfirmPress={() => setScreen("homeMyPage")}
       />
     );
   }
@@ -122,6 +138,15 @@ export default function App() {
       <ChangePasswordScreen
         onBackPress={() => setScreen("accountInfo")}
         onConfirmPress={() => setScreen("accountInfo")}
+      />
+    );
+  }
+
+  if (screen === "changePasswordHomeMyPage") {
+    return (
+      <ChangePasswordScreen
+        onBackPress={() => setScreen("homeMyPage")}
+        onConfirmPress={() => setScreen("homeMyPage")}
       />
     );
   }

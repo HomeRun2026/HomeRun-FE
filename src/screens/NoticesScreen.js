@@ -2,6 +2,7 @@ import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { AppScreen, Header } from "../components";
+import { colors } from "../theme";
 
 export const DEFAULT_NOTICE_ITEMS = [
   {
@@ -98,43 +99,58 @@ export function NoticesScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F4F7FA",
+    backgroundColor: colors.white,
   },
   list: {
     paddingHorizontal: 18,
-    paddingTop: 18,
+    paddingTop: 24,
     gap: 12,
   },
   card: {
-    borderRadius: 14,
+    alignSelf: "stretch",
+    alignItems: "flex-start",
+    justifyContent: "center",
+    rowGap: 4,
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#DFE7ED",
-    backgroundColor: "#F8FBFD",
+    borderColor: colors.gray03,
+    backgroundColor: "#FCFDFE",
     paddingHorizontal: 16,
     paddingVertical: 16,
   },
   cardTitle: {
-    fontSize: 18,
-    lineHeight: 26,
-    fontWeight: "700",
-    color: "#4A525A",
+    fontFamily: "SUIT",
+    fontSize: 16,
+    fontStyle: "normal",
+    fontWeight: "600",
+    lineHeight: 22.4,
+    letterSpacing: -0.16,
+    color: colors.gray08,
+    textAlign: "center",
   },
   metaRow: {
-    marginTop: 14,
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 8,
   },
   metaText: {
-    fontSize: 13,
-    lineHeight: 18,
+    fontFamily: "SUIT",
+    fontSize: 12,
+    fontStyle: "normal",
     fontWeight: "500",
-    color: "#B3BFCA",
+    lineHeight: 19.2,
+    letterSpacing: -0.12,
+    color: colors.gray06,
+    textAlign: "center",
   },
   metaDivider: {
-    fontSize: 13,
-    lineHeight: 18,
+    fontFamily: "SUIT",
+    fontSize: 12,
+    fontStyle: "normal",
     fontWeight: "500",
-    color: "#D1D9E1",
+    lineHeight: 19.2,
+    letterSpacing: -0.12,
+    color: colors.gray06,
+    textAlign: "center",
   },
 });

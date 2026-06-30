@@ -1,66 +1,67 @@
 import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
+} from "react-native";
 
-import { AppScreen, Header } from "../components";
+import { AppScreen, Header, PrimaryButton } from "../components";
+import BackIcon from "../../assets/images/L.svg";
+import { colors, layout, typography } from "../theme";
 
-export function AccountInfoScreen({ onBackPress, onPasswordPress }) {
-  const [nickname, setNickname] = useState("홍길동님");
-  const [nicknameDraft, setNicknameDraft] = useState("");
-  const [nicknameEditMode, setNicknameEditMode] = useState(false);
+export function AccountInfoScreen({ onBackPress, onConfirmPress }) {
+  const [nickname, setNickname] = useState("");
 
   return (
     <AppScreen>
       <View style={styles.container}>
-        <Header type="back" title="계정 정보" onBackPress={onBackPress} />
+        <Header
+          type="back"
+          title="닉네임 변경"
+          BackIcon={BackIcon}
+          backButtonStyle={styles.backButton}
+          backIconStyle={styles.backIcon}
+          headerStyle={styles.headerBox}
+          titleStyle={styles.headerTitle}
+          onBackPress={onBackPress}
+        />
 
-        <View style={styles.body}>
-          <Pressable
-            onPress={() => {
-              setNicknameDraft("");
-              setNicknameEditMode(true);
-            }}
-            style={styles.fieldRow}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.keyboardContainer}
+        >
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+            style={styles.scroller}
           >
-            <View>
-              <Text style={styles.fieldLabel}>닉네임</Text>
-              {nicknameEditMode ? (
-                <TextInput
-                  autoFocus
-                  onBlur={() => {
-                    if (nicknameDraft.trim()) {
-                      setNickname(nicknameDraft.trim());
-                    }
-                    setNicknameEditMode(false);
-                  }}
-                  onChangeText={setNicknameDraft}
-                  placeholder="이름 수정"
-                  placeholderTextColor="#A7B5C3"
-                  style={styles.nicknameInput}
-                  value={nicknameDraft}
-                />
-              ) : (
-                <Text style={styles.fieldValue}>{nickname}</Text>
-              )}
+            <View style={styles.content}>
+              <TextInput
+                cursorColor={colors.black}
+                onChangeText={setNickname}
+                placeholder="닉네임"
+                placeholderTextColor={colors.gray06}
+                selectionColor={colors.black}
+                style={styles.input}
+                underlineColorAndroid="transparent"
+                value={nickname}
+              />
             </View>
-            <Feather color="#BCC6D1" name="chevron-right" size={24} />
-          </Pressable>
+          </ScrollView>
+        </KeyboardAvoidingView>
 
-          <Pressable style={styles.fieldRow}>
-            <View>
-              <Text style={styles.fieldLabel}>이메일</Text>
-              <Text style={styles.fieldValue}>abcdg@gmail.com</Text>
-            </View>
-            <Feather color="#BCC6D1" name="chevron-right" size={24} />
-          </Pressable>
-
-          <Pressable onPress={onPasswordPress} style={styles.fieldRow}>
-            <View>
-              <Text style={styles.fieldLabel}>비밀번호</Text>
-              <Text style={styles.fieldValue}>************</Text>
-            </View>
-            <Feather color="#BCC6D1" name="chevron-right" size={24} />
-          </Pressable>
+        <View style={styles.footer}>
+          <PrimaryButton
+            onPress={onConfirmPress}
+            style={styles.confirmButton}
+            textStyle={styles.confirmText}
+          >
+            확인
+          </PrimaryButton>
         </View>
       </View>
     </AppScreen>
@@ -70,44 +71,91 @@ export function AccountInfoScreen({ onBackPress, onPasswordPress }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F4F7FA",
+    backgroundColor: colors.white,
   },
-  body: {
-    paddingTop: 4,
-  },
-  fieldRow: {
-    minHeight: 92,
-    paddingLeft: 24,
-    paddingRight: 12,
-    flexDirection: "row",
+  headerBox: {
+    display: "flex",
+    height: 54,
+    paddingHorizontal: 16,
     alignItems: "center",
-    justifyContent: "space-between",
+    gap: 12,
+    alignSelf: "stretch",
+    borderBottomColor: colors.gray03,
   },
-  fieldLabel: {
-    fontSize: 17,
-    lineHeight: 24,
-    fontWeight: "700",
-    color: "#464D56",
+  headerTitle: {
+    ...typography.head01Sb,
+    marginLeft: 0,
+    color: colors.black,
   },
-  fieldValue: {
-    marginTop: 2,
-    fontSize: 16,
-    lineHeight: 22,
-    fontWeight: "500",
-    color: "#8A9BAC",
+  backButton: {
+    width: 24,
+    height: 24,
   },
-  nicknameInput: {
-    marginTop: 4,
-    width: 160,
-    height: 34,
-    borderRadius: 8,
+  backIcon: {
+    width: 24,
+    height: 24,
+    aspectRatio: 1,
+  },
+  keyboardContainer: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
+  scroller: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+    paddingHorizontal: layout.screenMargin,
+    paddingTop: 24,
+    paddingBottom: 24,
+  },
+  input: {
+    display: "flex",
+    width: 328,
+    maxWidth: "100%",
+    height: 54,
+    padding: 16,
+    alignItems: "center",
+    gap: 10,
     borderWidth: 1,
-    borderColor: "#E2E8EF",
-    backgroundColor: "#FFFFFF",
-    paddingHorizontal: 10,
-    fontSize: 15,
-    lineHeight: 20,
-    fontWeight: "500",
-    color: "#46515D",
+    borderColor: colors.gray03,
+    borderRadius: 8,
+    backgroundColor: colors.gray02,
+    color: colors.gray06,
+    ...Platform.select({
+      web: {
+        outlineColor: "transparent",
+        outlineStyle: "none",
+        outlineWidth: 0,
+        boxShadow: "none",
+      },
+    }),
+    ...typography.body01Sb,
+    fontStyle: "normal",
+    letterSpacing: -0.16,
+    textAlign: "left",
+  },
+  footer: {
+    paddingHorizontal: layout.screenMargin,
+    paddingBottom: 64,
+    alignItems: "center",
+  },
+  confirmButton: {
+    display: "flex",
+    width: 328,
+    maxWidth: "100%",
+    height: 54,
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    borderRadius: 8,
+    backgroundColor: colors.main,
+  },
+  confirmText: {
+    ...typography.body01Sb,
+    color: colors.white,
   },
 });
