@@ -123,7 +123,7 @@ export default function App() {
     return (
       <AccountInfoScreen
         onBackPress={() => setScreen("homeMyPage")}
-        onPasswordPress={() => setScreen("changePassword")}
+        onConfirmPress={() => setScreen("homeMyPage")}
       />
     );
   }
