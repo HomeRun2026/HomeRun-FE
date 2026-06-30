@@ -57,6 +57,7 @@ export function InquiryScreen({ onBackPress }) {
               placeholder="제목"
               placeholderTextColor={colors.gray06}
               style={styles.titleInput}
+              textAlign="left"
               value={title}
             />
 
@@ -66,6 +67,7 @@ export function InquiryScreen({ onBackPress }) {
               placeholder="문의 내용을 작성해주세요"
               placeholderTextColor={colors.gray06}
               style={styles.contentInput}
+              textAlign="left"
               textAlignVertical="top"
               value={content}
             />
@@ -94,32 +96,37 @@ const styles = StyleSheet.create({
   },
   content: {
     flexGrow: 1,
-    paddingHorizontal: 26,
-    paddingTop: 40,
+    paddingHorizontal: 16,
+    paddingTop: 24,
     paddingBottom: 38,
   },
   titleInput: {
+    display: "flex",
     height: 54,
-    paddingHorizontal: 16,
+    padding: 16,
+    alignItems: "center",
+    gap: 10,
+    alignSelf: "stretch",
     borderWidth: 1,
-    borderColor: colors.gray04,
+    borderColor: colors.gray03,
     borderRadius: 8,
     backgroundColor: colors.gray02,
-    color: colors.gray09,
+    color: colors.gray06,
     ...typography.body01Sb,
   },
   contentInput: {
-    flex: 1,
-    minHeight: 430,
+    display: "flex",
+    height: 466,
     marginTop: 20,
-    paddingHorizontal: 16,
-    paddingTop: 24,
-    paddingBottom: 16,
+    padding: 16,
+    alignItems: "flex-start",
+    gap: 10,
+    alignSelf: "stretch",
     borderWidth: 1,
-    borderColor: colors.gray04,
+    borderColor: colors.gray03,
     borderRadius: 8,
     backgroundColor: colors.gray02,
-    color: colors.gray09,
+    color: colors.gray06,
     ...typography.body01Sb,
   },
   submitButton: {
