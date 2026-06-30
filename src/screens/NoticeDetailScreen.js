@@ -2,6 +2,7 @@ import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { AppScreen, Header } from "../components";
+import { colors } from "../theme";
 import { DEFAULT_NOTICE_ITEMS } from "./NoticesScreen";
 
 const FALLBACK_NOTICE = DEFAULT_NOTICE_ITEMS[0];
@@ -41,42 +42,56 @@ export function NoticeDetailScreen({ notice = FALLBACK_NOTICE, onBackPress }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F4F7FA",
+    backgroundColor: colors.white,
   },
   scrollContent: {
-    paddingHorizontal: 22,
+    paddingHorizontal: 16,
     paddingTop: 24,
     paddingBottom: 40,
   },
   title: {
-    fontSize: 20,
-    lineHeight: 30,
-    fontWeight: "700",
-    color: "#4A525A",
+    fontFamily: "SUIT",
+    fontSize: 16,
+    fontStyle: "normal",
+    fontWeight: "600",
+    lineHeight: 22.4,
+    letterSpacing: -0.16,
+    color: colors.gray08,
   },
   metaRow: {
-    marginTop: 12,
+    marginTop: 8,
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 8,
   },
   metaText: {
-    fontSize: 13,
-    lineHeight: 18,
+    fontFamily: "SUIT",
+    fontSize: 12,
+    fontStyle: "normal",
     fontWeight: "500",
-    color: "#B3BFCA",
+    lineHeight: 19.2,
+    letterSpacing: -0.12,
+    color: colors.gray06,
+    textAlign: "center",
   },
   metaDivider: {
-    fontSize: 13,
-    lineHeight: 18,
+    fontFamily: "SUIT",
+    fontSize: 12,
+    fontStyle: "normal",
     fontWeight: "500",
-    color: "#D1D9E1",
+    lineHeight: 19.2,
+    letterSpacing: -0.12,
+    color: colors.gray06,
+    textAlign: "center",
   },
   body: {
-    marginTop: 26,
-    fontSize: 17,
-    lineHeight: 30,
+    marginTop: 28,
+    fontFamily: "SUIT",
+    fontSize: 12,
+    fontStyle: "normal",
     fontWeight: "500",
-    color: "#4A525A",
+    lineHeight: 19.2,
+    letterSpacing: -0.12,
+    color: colors.gray08,
   },
 });
