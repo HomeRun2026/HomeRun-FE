@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { login } from "../../api/auth/login";
+import { extractAuthTokens, setAuthTokens } from "../../api/auth/tokens";
 import { startGoogleAuth } from "../../api/google";
 import {
   AppScreen,
@@ -24,8 +25,8 @@ export function LoginScreen({
   const [remember, setRemember] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-
   const [showPassword, setShowPassword] = useState(false);
+
   const handleLoginPress = async () => {
     const trimmedEmail = email.trim();
 
@@ -37,11 +38,12 @@ export function LoginScreen({
     setIsSubmitting(true);
 
     try {
-      await login({
+      const loginResponse = await login({
         email: trimmedEmail,
         password,
       });
 
+      setAuthTokens(extractAuthTokens(loginResponse));
       onLoginPress?.();
     } catch (error) {
       Alert.alert(
@@ -51,14 +53,6 @@ export function LoginScreen({
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleSignupPress = () => {
-    onSignupPress?.();
-  };
-
-  const handleFindPasswordPress = () => {
-    onFindPasswordPress?.();
   };
 
   const handleGooglePress = async () => {
@@ -102,8 +96,9 @@ export function LoginScreen({
             value={password}
           />
           <PrimaryButton
+            disabled={isSubmitting}
             onPress={handleLoginPress}
-            style={styles.loginButton}
+            style={[styles.loginButton, isSubmitting && styles.disabled]}
             textStyle={styles.loginButtonText}
           >
             로그인
@@ -125,7 +120,7 @@ export function LoginScreen({
             <Pressable
               accessibilityRole="button"
               hitSlop={12}
-              onPress={handleSignupPress}
+              onPress={onSignupPress}
               style={styles.linkButton}
             >
               <Text style={styles.optionText}>회원가입</Text>
@@ -134,7 +129,7 @@ export function LoginScreen({
             <Pressable
               accessibilityRole="button"
               hitSlop={12}
-              onPress={handleFindPasswordPress}
+              onPress={onFindPasswordPress}
               style={styles.linkButton}
             >
               <Text style={styles.optionText}>비밀번호 찾기</Text>
@@ -216,6 +211,12 @@ const styles = StyleSheet.create({
     display: "flex",
     height: 54,
     marginTop: 4,
+  },
+  loginButtonText: {
+    ...typography.body01Sb,
+  },
+  disabled: {
+    opacity: 0.6,
   },
   options: {
     marginTop: 12,

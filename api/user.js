@@ -15,53 +15,21 @@
     "message": "인증이 필요합니다."
   }
 */
-import { buildApiUrl } from "./client";
+import { clearAuthTokens, getAccessToken } from "./auth/tokens";
+import { requestJson } from "./client";
 
 const USER_ENDPOINT = "/api/user";
 
-async function parseJsonSafely(response) {
-  const text = await response.text();
-
-  if (!text) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(text);
-  } catch {
-    return null;
-  }
-}
-
-function createUserError(response, data) {
-  const error = new Error(data?.message ?? "Failed to delete user");
-
-  error.status = response.status;
-  error.code = data?.code;
-  error.data = data;
-
-  return error;
-}
-
-export async function deleteUser({ accessToken, signal } = {}) {
-  const headers = {
-    Accept: "application/json",
-  };
-
-  if (accessToken) {
-    headers.Authorization = `Bearer ${accessToken}`;
-  }
-
-  const response = await fetch(buildApiUrl(USER_ENDPOINT), {
+export async function deleteUser({ accessToken = getAccessToken(), signal } = {}) {
+  const data = await requestJson({
+    path: USER_ENDPOINT,
     method: "DELETE",
-    headers,
+    accessToken,
     signal,
+    errorMessage: "회원 탈퇴에 실패했습니다.",
   });
-  const data = await parseJsonSafely(response);
 
-  if (!response.ok) {
-    throw createUserError(response, data);
-  }
+  clearAuthTokens();
 
   return data;
 }

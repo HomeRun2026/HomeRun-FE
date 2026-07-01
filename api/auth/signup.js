@@ -20,33 +20,9 @@
     }
   }
 */
-import { buildApiUrl } from "../client";
+import { requestJson } from "../client";
 
 const SIGNUP_ENDPOINT = "/api/auth/signup";
-
-async function parseJsonSafely(response) {
-  const text = await response.text();
-
-  if (!text) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(text);
-  } catch {
-    return null;
-  }
-}
-
-function createSignupError(response, data) {
-  const error = new Error(data?.message ?? "Failed to signup");
-
-  error.status = response.status;
-  error.code = data?.code;
-  error.data = data;
-
-  return error;
-}
 
 export async function signup({
   email,
@@ -55,25 +31,16 @@ export async function signup({
   nickname,
   signal,
 }) {
-  const response = await fetch(buildApiUrl(SIGNUP_ENDPOINT), {
+  return requestJson({
+    path: SIGNUP_ENDPOINT,
     method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
+    body: {
       email,
       password,
       passwordConfirm,
       nickname,
-    }),
+    },
     signal,
+    errorMessage: "회원가입에 실패했습니다.",
   });
-  const data = await parseJsonSafely(response);
-
-  if (!response.ok) {
-    throw createSignupError(response, data);
-  }
-
-  return data;
 }

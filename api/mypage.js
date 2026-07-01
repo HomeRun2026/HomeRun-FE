@@ -15,53 +15,19 @@
     "message": "인증이 필요합니다"
   }
 */
-import { buildApiUrl } from "./client";
+import { getAccessToken } from "./auth/tokens";
+import { requestJson } from "./client";
 
 const MYPAGE_ENDPOINT = "/api/mypage";
 
-async function parseJsonSafely(response) {
-  const text = await response.text();
-
-  if (!text) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(text);
-  } catch {
-    return null;
-  }
-}
-
-function createApiError(response, data) {
-  const error = new Error(data?.message ?? "Failed to load mypage");
-
-  error.status = response.status;
-  error.code = data?.code;
-  error.data = data;
-
-  return error;
-}
-
-export async function getMyPage({ accessToken, signal } = {}) {
-  const headers = {
-    Accept: "application/json",
-  };
-
-  if (accessToken) {
-    headers.Authorization = `Bearer ${accessToken}`;
-  }
-
-  const response = await fetch(buildApiUrl(MYPAGE_ENDPOINT), {
+export async function getMyPage({ accessToken = getAccessToken(), signal } = {}) {
+  const data = await requestJson({
+    path: MYPAGE_ENDPOINT,
     method: "GET",
-    headers,
+    accessToken,
     signal,
+    errorMessage: "마이페이지 정보를 불러오지 못했습니다.",
   });
-  const data = await parseJsonSafely(response);
-
-  if (!response.ok) {
-    throw createApiError(response, data);
-  }
 
   return {
     appVersion: data?.appVersion,
