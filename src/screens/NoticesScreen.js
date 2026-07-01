@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
+import { getNotices } from "../../api/mypage/notice";
 import { AppScreen, Header } from "../components";
 import { colors } from "../theme";
 
@@ -64,17 +65,52 @@ export const DEFAULT_NOTICE_ITEMS = [
  * - onNoticePress: 공지 클릭 시 상세 페이지 라우팅에 사용
  */
 export function NoticesScreen({
-  notices = DEFAULT_NOTICE_ITEMS,
+  notices,
   onBackPress,
   onNoticePress,
 }) {
+  const [noticeItems, setNoticeItems] = useState(
+    notices ?? DEFAULT_NOTICE_ITEMS,
+  );
+
+  useEffect(() => {
+    let isActive = true;
+
+    if (notices) {
+      setNoticeItems(notices);
+      return () => {
+        isActive = false;
+      };
+    }
+
+    async function loadNotices() {
+      try {
+        const data = await getNotices();
+
+        if (isActive) {
+          setNoticeItems(data);
+        }
+      } catch {
+        if (isActive) {
+          setNoticeItems(DEFAULT_NOTICE_ITEMS);
+        }
+      }
+    }
+
+    loadNotices();
+
+    return () => {
+      isActive = false;
+    };
+  }, [notices]);
+
   return (
     <AppScreen>
       <View style={styles.container}>
         <Header type="back" title="공지사항" onBackPress={onBackPress} />
 
         <View style={styles.list}>
-          {notices.map((notice) => (
+          {noticeItems.map((notice) => (
             <Pressable
               key={notice.id}
               onPress={() => onNoticePress?.(notice)}

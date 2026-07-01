@@ -193,7 +193,8 @@ const styles = StyleSheet.create({
     paddingLeft: 38,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start",
+    // 넓은 화면에서도 하단 탭 아이템 묶음이 왼쪽으로 쏠리지 않게 가운데에 둡니다.
+    justifyContent: "center",
     gap: 22,
     backgroundColor: colors.white,
     borderTopLeftRadius: 16,

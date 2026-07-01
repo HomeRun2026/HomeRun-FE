@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
+import { getNoticeById } from "../../api/mypage/id";
 import { AppScreen, Header } from "../components";
 import { colors } from "../theme";
 import { DEFAULT_NOTICE_ITEMS } from "./NoticesScreen";
@@ -13,6 +14,41 @@ const FALLBACK_NOTICE = DEFAULT_NOTICE_ITEMS[0];
  * - 본문 렌더링은 서버에서 내려주는 markdown/html 포맷으로 교체 가능
  */
 export function NoticeDetailScreen({ notice = FALLBACK_NOTICE, onBackPress }) {
+  const [noticeDetail, setNoticeDetail] = useState(notice ?? FALLBACK_NOTICE);
+
+  useEffect(() => {
+    let isActive = true;
+
+    if (!notice?.id) {
+      setNoticeDetail(FALLBACK_NOTICE);
+      return () => {
+        isActive = false;
+      };
+    }
+
+    setNoticeDetail(notice);
+
+    async function loadNoticeDetail() {
+      try {
+        const data = await getNoticeById({ id: notice.id });
+
+        if (isActive) {
+          setNoticeDetail(data);
+        }
+      } catch {
+        if (isActive) {
+          setNoticeDetail(notice);
+        }
+      }
+    }
+
+    loadNoticeDetail();
+
+    return () => {
+      isActive = false;
+    };
+  }, [notice]);
+
   return (
     <AppScreen>
       <View style={styles.container}>
@@ -22,17 +58,17 @@ export function NoticeDetailScreen({ notice = FALLBACK_NOTICE, onBackPress }) {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.title}>{notice.title}</Text>
+          <Text style={styles.title}>{noticeDetail.title}</Text>
 
           <View style={styles.metaRow}>
-            <Text style={styles.metaText}>{notice.dateText}</Text>
+            <Text style={styles.metaText}>{noticeDetail.dateText}</Text>
             <Text style={styles.metaDivider}>|</Text>
-            <Text style={styles.metaText}>조회수 {notice.viewCount}</Text>
+            <Text style={styles.metaText}>조회수 {noticeDetail.viewCount}</Text>
             <Text style={styles.metaDivider}>|</Text>
-            <Text style={styles.metaText}>{notice.author}</Text>
+            <Text style={styles.metaText}>{noticeDetail.author}</Text>
           </View>
 
-          <Text style={styles.body}>{notice.content}</Text>
+          <Text style={styles.body}>{noticeDetail.content}</Text>
         </ScrollView>
       </View>
     </AppScreen>

@@ -25,6 +25,7 @@ export async function sendEmailVerificationCode({ email, signal }) {
       email,
     },
     signal,
+    timeoutMs: 30000,
     timeoutMessage:
       "인증번호 발송 요청 시간이 초과되었습니다. 잠시 후 다시 시도해 주세요.",
     errorMessage: "인증번호 발송에 실패했습니다.",

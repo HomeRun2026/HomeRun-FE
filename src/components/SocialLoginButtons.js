@@ -6,26 +6,43 @@ import KakaoTalkLogo from "../../assets/images/kakaotalk.svg";
 import NaverLogo from "../../assets/images/naver.svg";
 import { colors } from "../theme";
 
-export function SocialLoginButtons({ isGoogleLoading = false, onGooglePress }) {
+export function SocialLoginButtons({
+  buttonStyle,
+  iconSize = 32,
+  isGoogleLoading = false,
+  kakaoIconSize = 34,
+  onGooglePress,
+  style,
+}) {
   return (
-    <View style={styles.socials}>
+    <View style={[styles.socials, style]}>
       <Pressable
         accessibilityLabel="구글로 로그인"
         accessibilityRole="button"
         accessibilityState={{ disabled: isGoogleLoading }}
         disabled={isGoogleLoading}
         onPress={onGooglePress}
-        style={[styles.google, isGoogleLoading && styles.disabled]}
+        style={[
+          styles.google,
+          buttonStyle,
+          isGoogleLoading && styles.disabled,
+        ]}
       >
-        <GoogleLogo height={32} width={32} />
+        <GoogleLogo height={iconSize} width={iconSize} />
       </Pressable>
 
-      <Pressable accessibilityLabel="네이버로 로그인" style={styles.naver}>
-        <NaverLogo height={32} width={32} />
+      <Pressable
+        accessibilityLabel="네이버로 로그인"
+        style={[styles.naver, buttonStyle]}
+      >
+        <NaverLogo height={iconSize} width={iconSize} />
       </Pressable>
 
-      <Pressable accessibilityLabel="카카오로 로그인" style={styles.kakao}>
-        <KakaoTalkLogo height={34} width={34} />
+      <Pressable
+        accessibilityLabel="카카오로 로그인"
+        style={[styles.kakao, buttonStyle]}
+      >
+        <KakaoTalkLogo height={kakaoIconSize} width={kakaoIconSize} />
       </Pressable>
     </View>
   );
