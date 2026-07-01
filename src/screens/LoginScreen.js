@@ -10,6 +10,8 @@ import {
   SocialLoginButtons,
 } from "../components";
 import HomerunLogo from "../../assets/images/homerun_logo.svg";
+import HiddenIcon from "../../assets/images/icon_password_hidden.svg";
+import VisibleIcon from "../../assets/images/icon_visible.svg";
 import { colors, layout, typography } from "../theme";
 
 export function LoginScreen({
@@ -23,6 +25,7 @@ export function LoginScreen({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
+  const [showPassword, setShowPassword] = useState(false);
   const handleLoginPress = async () => {
     const trimmedEmail = email.trim();
 
@@ -89,18 +92,19 @@ export function LoginScreen({
             placeholder="이메일"
             value={email}
           />
-          <FormTextInput
+          <PasswordInput
             autoCapitalize="none"
             autoComplete="password"
             onChangeText={setPassword}
+            onToggleVisibility={() => setShowPassword((value) => !value)}
             placeholder="비밀번호"
-            secureTextEntry
+            secureTextEntry={!showPassword}
             value={password}
           />
           <PrimaryButton
-            disabled={isSubmitting}
             onPress={handleLoginPress}
-            style={[styles.loginButton, isSubmitting && styles.disabled]}
+            style={styles.loginButton}
+            textStyle={styles.loginButtonText}
           >
             로그인
           </PrimaryButton>
@@ -153,6 +157,34 @@ export function LoginScreen({
   );
 }
 
+function PasswordInput({
+  onToggleVisibility,
+  secureTextEntry,
+  style,
+  ...props
+}) {
+  const VisibilityIcon = secureTextEntry ? HiddenIcon : VisibleIcon;
+
+  return (
+    <View style={styles.passwordInputWrap}>
+      <FormTextInput
+        secureTextEntry={secureTextEntry}
+        style={[styles.passwordInput, style]}
+        {...props}
+      />
+      <Pressable
+        accessibilityLabel={secureTextEntry ? "비밀번호 보기" : "비밀번호 숨기기"}
+        accessibilityRole="button"
+        hitSlop={8}
+        onPress={onToggleVisibility}
+        style={styles.eyeButton}
+      >
+        <VisibilityIcon />
+      </Pressable>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   content: {
     flex: 1,
@@ -164,16 +196,29 @@ const styles = StyleSheet.create({
     marginBottom: 44,
   },
   form: {
-    gap: 12,
+    gap: 8,
+  },
+  passwordInputWrap: {
+    justifyContent: "center",
+  },
+  passwordInput: {
+    paddingRight: 58,
+  },
+  eyeButton: {
+    position: "absolute",
+    right: 16,
+    width: 24,
+    height: 24,
+    alignItems: "center",
+    justifyContent: "center",
   },
   loginButton: {
+    display: "flex",
+    height: 54,
     marginTop: 4,
   },
-  disabled: {
-    opacity: 0.6,
-  },
   options: {
-    marginTop: 14,
+    marginTop: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -184,20 +229,25 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   check: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 14,
+    height: 14,
+    aspectRatio: 1,
+    borderRadius: 7,
     borderWidth: 1,
-    borderColor: colors.gray05,
-    backgroundColor: colors.gray05,
+    borderColor: colors.gray04,
+    backgroundColor: colors.gray03,
   },
   checkOn: {
     borderColor: colors.main,
     backgroundColor: colors.main,
   },
   optionText: {
-    ...typography.body03M,
+    ...typography.caption01M,
     color: colors.gray07,
+    fontStyle: "normal",
+    lineHeight: 19.2,
+    letterSpacing: -0.12,
+    textAlign: "center",
   },
   links: {
     flexDirection: "row",
@@ -225,7 +275,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray04,
   },
   simpleText: {
-    ...typography.body03M,
+    ...typography.caption01M,
     color: colors.gray06,
+    fontStyle: "normal",
+    lineHeight: 19.2,
+    letterSpacing: -0.12,
+    textAlign: "center",
   },
 });
