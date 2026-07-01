@@ -10,7 +10,7 @@ import MypageIn from "../../assets/images/Mypage_in.svg";
 import MypageOut from "../../assets/images/Mypage_out.svg";
 import { Header } from "../components";
 import { MyPageScreen } from "./MyPageScreen";
-import { colors, layout, typography } from "../theme";
+import { colors, typography } from "../theme";
 
 const homeBackground = colors.gray01;
 const tabIconSize = 32;
@@ -48,8 +48,16 @@ export function HomeScreen({
   onOpenContact,
   onOpenPrivacy,
   onOpenTerms,
+  onTabPress,
 }) {
   const [activeTab, setActiveTab] = useState(initialTab);
+  const handleTabPress = (tabKey) => {
+    if (onTabPress?.(tabKey)) {
+      return;
+    }
+
+    setActiveTab(tabKey);
+  };
 
   return (
     <View style={styles.screen}>
@@ -102,7 +110,7 @@ export function HomeScreen({
                   accessibilityRole="button"
                   accessibilityState={{ selected }}
                   key={key}
-                  onPress={() => setActiveTab(key)}
+                  onPress={() => handleTabPress(key)}
                   style={styles.tabItem}
                 >
                   <Icon height={tabIconSize} width={tabIconSize} />
@@ -139,9 +147,7 @@ const styles = StyleSheet.create({
   },
   phone: {
     flex: 1,
-    alignSelf: "center",
     width: "100%",
-    maxWidth: layout.maxPhoneWidth,
     backgroundColor: homeBackground,
   },
   content: {
@@ -168,7 +174,6 @@ const styles = StyleSheet.create({
   tabBarShadow: {
     position: "absolute",
     width: "100%",
-    maxWidth: layout.maxPhoneWidth,
     height: 12,
     overflow: "hidden",
   },
@@ -186,7 +191,6 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     width: "100%",
-    maxWidth: layout.maxPhoneWidth,
     paddingTop: 16,
     paddingRight: 38,
     paddingBottom: 24,

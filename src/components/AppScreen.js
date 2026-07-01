@@ -1,14 +1,17 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { colors, layout } from "../theme";
+import { colors } from "../theme";
 
 export function AppScreen({ children }) {
   return (
     <View style={styles.screen}>
       <StatusBar style="dark" backgroundColor={colors.white} />
-      <View style={styles.phone}>{children}</View>
+      <SafeAreaView edges={["top", "bottom"]} style={styles.phone}>
+        {children}
+      </SafeAreaView>
     </View>
   );
 }
@@ -20,9 +23,7 @@ const styles = StyleSheet.create({
   },
   phone: {
     flex: 1,
-    alignSelf: "center",
     width: "100%",
-    maxWidth: layout.maxPhoneWidth,
     backgroundColor: colors.white,
   },
 });

@@ -8,6 +8,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { login } from "../../api/auth/login";
 import { extractAuthTokens, setAuthTokens } from "../../api/auth/tokens";
@@ -28,7 +29,9 @@ export function LoginScreen({
   onSignupPress,
   onFindPasswordPress,
 }) {
-  const { height } = useWindowDimensions();
+  const { height, width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const availableHeight = Math.max(height - insets.top - insets.bottom, 1);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
@@ -36,28 +39,34 @@ export function LoginScreen({
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   // 가로로 긴 화면처럼 높이가 낮을 때도 전체 로그인 요소가 같은 비율로 화면 안에 들어오도록 조절합니다.
-  const isShortHeight = height < 600;
-  const layoutScale = Math.min(Math.max(height / 760, 0.78), 1);
+  const isShortHeight = availableHeight < 600;
+  const isWideRoomy = width > height && width >= 900 && availableHeight >= 700;
+  const layoutScale = Math.min(Math.max(availableHeight / 760, 0.78), 1);
   const verticalScale = isShortHeight ? layoutScale * 0.65 : layoutScale;
+  const logoScale = isWideRoomy ? 1.32 : 1;
   const socialButtonSize = Math.round(Math.max(42, 54 * layoutScale));
+  const socialIconSize = Math.round(32 * layoutScale);
+  const kakaoSocialIconSize = Math.round(34 * layoutScale);
   const controlHeight = Math.round(Math.max(42, 54 * layoutScale));
+  const verticalPadding = Math.round(
+    Math.max(
+      isShortHeight ? 12 : 20,
+      Math.min(isShortHeight ? 24 : 48, availableHeight * 0.04),
+    ),
+  );
   const responsiveLayout = {
     scrollContent: {
-      paddingTop: Math.round(
-        Math.min(
-          204,
-          Math.max(
-            isShortHeight ? 24 : 32,
-            height * (isShortHeight ? 0.08 : 0.22),
-          ),
-        ),
-      ),
-      paddingBottom: Math.round(
-        Math.max(isShortHeight ? 12 : 20, 48 * verticalScale),
-      ),
+      paddingTop: verticalPadding,
+      paddingBottom: verticalPadding,
+    },
+    content: {
+      transform: [{ translateY: isWideRoomy ? -18 : 0 }],
     },
     logo: {
-      marginBottom: Math.round(Math.max(isShortHeight ? 12 : 18, 44 * verticalScale)),
+      marginBottom: Math.round(
+        Math.max(isShortHeight ? 12 : 18, 44 * verticalScale),
+      ),
+      transform: [{ translateY: isWideRoomy ? -22 : 0 }],
     },
     input: {
       height: controlHeight,
@@ -78,8 +87,9 @@ export function LoginScreen({
       gap: Math.round(Math.max(12, 24 * layoutScale)),
     },
     social: {
-      marginTop: Math.round(Math.max(10, 24 * verticalScale)),
+      marginTop: Math.round(isWideRoomy ? 18 : Math.max(10, 24 * verticalScale)),
       gap: Math.round(Math.max(18, 36 * layoutScale)),
+      transform: [{ translateY: isWideRoomy ? -4 : 0 }],
     },
     socialButton: {
       width: socialButtonSize,
@@ -139,12 +149,12 @@ export function LoginScreen({
         showsVerticalScrollIndicator={false}
         style={styles.scroller}
       >
-        <View style={styles.content}>
+        <View style={[styles.content, responsiveLayout.content]}>
           <HomerunLogo
             accessibilityLabel="홈런"
-            height={Math.round(58 * layoutScale)}
+            height={Math.round(58 * layoutScale * logoScale)}
             style={[styles.logo, responsiveLayout.logo]}
-            width={Math.round(150 * layoutScale)}
+            width={Math.round(150 * layoutScale * logoScale)}
           />
 
         <View style={[styles.form, responsiveLayout.form]}>
@@ -221,9 +231,9 @@ export function LoginScreen({
 
         <SocialLoginButtons
           buttonStyle={responsiveLayout.socialButton}
-          iconSize={Math.round(32 * layoutScale)}
+          iconSize={socialIconSize}
           isGoogleLoading={isGoogleLoading}
-          kakaoIconSize={Math.round(34 * layoutScale)}
+          kakaoIconSize={kakaoSocialIconSize}
           onGooglePress={handleGooglePress}
           style={responsiveLayout.social}
         />
@@ -267,6 +277,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
+    justifyContent: "center",
   },
   content: {
     marginHorizontal: layout.screenMargin,

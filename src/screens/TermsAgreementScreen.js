@@ -225,13 +225,8 @@ export function TermsAgreementScreen({
 
 const styles = StyleSheet.create({
   agreementBox: {
-    width: 360,
-    height: 800,
-    maxWidth: "100%",
-    maxHeight: "100%",
-    alignSelf: "center",
-    borderRadius: 16,
-    overflow: "hidden",
+    flex: 1,
+    width: "100%",
     backgroundColor: colors.white,
   },
   headerBox: {
@@ -378,8 +373,7 @@ const styles = StyleSheet.create({
   confirmButton: {
     marginTop: 24,
     display: "flex",
-    width: 328,
-    maxWidth: "100%",
+    width: "100%",
     height: 54,
     padding: 10,
     alignItems: "center",

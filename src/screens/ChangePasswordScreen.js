@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  useWindowDimensions,
   View,
 } from "react-native";
 
@@ -17,9 +18,16 @@ import VisibleIcon from "../../assets/images/icon_visible.svg";
 import { colors, layout, typography } from "../theme";
 
 export function ChangePasswordScreen({ onBackPress, onConfirmPress }) {
+  const { height, width } = useWindowDimensions();
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showNewPasswordConfirm, setShowNewPasswordConfirm] = useState(false);
+  const shouldUseInlineFooter = width > height || height < 640;
+  const confirmButton = (
+    <PrimaryButton onPress={onConfirmPress} style={styles.confirmButton}>
+      확인
+    </PrimaryButton>
+  );
 
   return (
     <AppScreen>
@@ -78,15 +86,17 @@ export function ChangePasswordScreen({ onBackPress, onConfirmPress }) {
               <Text style={styles.helper}>
                 (영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 8자~16자)
               </Text>
+
+              {shouldUseInlineFooter && (
+                <View style={styles.inlineFooter}>{confirmButton}</View>
+              )}
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
 
-        <View style={styles.footer}>
-          <PrimaryButton onPress={onConfirmPress} style={styles.confirmButton}>
-            확인
-          </PrimaryButton>
-        </View>
+        {!shouldUseInlineFooter && (
+          <View style={styles.footer}>{confirmButton}</View>
+        )}
       </View>
     </AppScreen>
   );
@@ -227,10 +237,14 @@ const styles = StyleSheet.create({
     paddingBottom: 64,
     alignItems: "center",
   },
+  inlineFooter: {
+    marginTop: 24,
+    paddingBottom: 24,
+    alignItems: "center",
+  },
   confirmButton: {
     display: "flex",
-    width: 328,
-    maxWidth: "100%",
+    width: "100%",
     height: 54,
     padding: 10,
     alignItems: "center",
