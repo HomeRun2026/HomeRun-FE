@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 
+import { login } from "../../api/auth/login";
+import { extractAuthTokens, setAuthTokens } from "../../api/auth/tokens";
+import { startGoogleAuth } from "../../api/google";
 import {
   AppScreen,
   FormTextInput,
@@ -17,16 +20,51 @@ export function LoginScreen({
   onSignupPress,
   onFindPasswordPress,
 }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const handleLoginPress = () => {
-    onLoginPress?.();
+
+  const handleLoginPress = async () => {
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail || !password) {
+      Alert.alert("로그인", "이메일과 비밀번호를 입력해 주세요.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const loginResponse = await login({
+        email: trimmedEmail,
+        password,
+      });
+
+      setAuthTokens(extractAuthTokens(loginResponse));
+      onLoginPress?.();
+    } catch (error) {
+      Alert.alert(
+        "로그인",
+        error?.message ?? "로그인에 실패했습니다. 다시 시도해 주세요.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-  const handleSignupPress = () => {
-    onSignupPress?.();
-  };
-  const handleFindPasswordPress = () => {
-    onFindPasswordPress?.();
+
+  const handleGooglePress = async () => {
+    setIsGoogleLoading(true);
+
+    try {
+      await startGoogleAuth();
+    } catch {
+      Alert.alert("구글 로그인", "구글 로그인을 시작하지 못했습니다. 다시 시도해 주세요.");
+    } finally {
+      setIsGoogleLoading(false);
+    }
   };
 
   return (
@@ -44,18 +82,23 @@ export function LoginScreen({
             autoCapitalize="none"
             autoComplete="email"
             keyboardType="email-address"
+            onChangeText={setEmail}
             placeholder="이메일"
+            value={email}
           />
           <PasswordInput
             autoCapitalize="none"
             autoComplete="password"
+            onChangeText={setPassword}
             onToggleVisibility={() => setShowPassword((value) => !value)}
             placeholder="비밀번호"
             secureTextEntry={!showPassword}
+            value={password}
           />
           <PrimaryButton
+            disabled={isSubmitting}
             onPress={handleLoginPress}
-            style={styles.loginButton}
+            style={[styles.loginButton, isSubmitting && styles.disabled]}
             textStyle={styles.loginButtonText}
           >
             로그인
@@ -77,7 +120,7 @@ export function LoginScreen({
             <Pressable
               accessibilityRole="button"
               hitSlop={12}
-              onPress={handleSignupPress}
+              onPress={onSignupPress}
               style={styles.linkButton}
             >
               <Text style={styles.optionText}>회원가입</Text>
@@ -86,7 +129,7 @@ export function LoginScreen({
             <Pressable
               accessibilityRole="button"
               hitSlop={12}
-              onPress={handleFindPasswordPress}
+              onPress={onFindPasswordPress}
               style={styles.linkButton}
             >
               <Text style={styles.optionText}>비밀번호 찾기</Text>
@@ -100,7 +143,10 @@ export function LoginScreen({
           <View style={styles.simpleLine} />
         </View>
 
-        <SocialLoginButtons />
+        <SocialLoginButtons
+          isGoogleLoading={isGoogleLoading}
+          onGooglePress={handleGooglePress}
+        />
       </View>
     </AppScreen>
   );
@@ -165,20 +211,12 @@ const styles = StyleSheet.create({
     display: "flex",
     height: 54,
     marginTop: 4,
-    padding: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 10,
-    alignSelf: "stretch",
-    borderRadius: 8,
-    backgroundColor: colors.main,
   },
   loginButtonText: {
     ...typography.body01Sb,
-    color: colors.white,
-    fontStyle: "normal",
-    letterSpacing: -0.16,
-    textAlign: "center",
+  },
+  disabled: {
+    opacity: 0.6,
   },
   options: {
     marginTop: 12,

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+﻿import React, { useMemo, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 
 import BackIcon from "../../assets/images/L.svg";
@@ -6,8 +6,10 @@ import CheckboxFillIcon from "../../assets/images/Checkbox_fill.svg";
 import CheckboxIcon from "../../assets/images/Checkbox.svg";
 import DownIcon from "../../assets/images/Down.svg";
 import UpIcon from "../../assets/images/Up.svg";
+import { agreeToSignupTerms } from "../../api/auth/consent";
+import { signup } from "../../api/auth/signup";
+import { extractAuthTokens, setAuthTokens } from "../../api/auth/tokens";
 import { AppScreen, Header, PrimaryButton } from "../components";
-import { buildApiUrl } from "../config/api";
 import { colors, layout, typography } from "../theme";
 
 const TERMS = [
@@ -88,25 +90,33 @@ export function TermsAgreementScreen({
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(buildApiUrl("/api/auth/signup"), {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: signupForm.email,
-          nickname: signupForm.nickname,
-          password: signupForm.password,
-        }),
+      const signupResponse = await signup({
+        email: signupForm.email,
+        nickname: signupForm.nickname,
+        password: signupForm.password,
+        passwordConfirm: signupForm.passwordConfirm,
+      });
+      const accessToken = signupResponse?.data?.accessToken;
+
+      const consentResponse = await agreeToSignupTerms({
+        serviceTermsAgreement: checkedMap.service,
+        serviceInfoAgreement: checkedMap.privacy,
+        accessToken,
+      });
+      const signupTokens = extractAuthTokens(signupResponse);
+      const consentTokens = extractAuthTokens(consentResponse);
+
+      setAuthTokens({
+        accessToken: consentTokens.accessToken ?? signupTokens.accessToken,
+        refreshToken: consentTokens.refreshToken ?? signupTokens.refreshToken,
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to signup");
-      }
-
       onConfirmPress?.();
-    } catch {
-      Alert.alert("회원가입", "회원가입 요청에 실패했습니다. 다시 시도해 주세요.");
+    } catch (error) {
+      Alert.alert(
+        "회원가입",
+        error?.message ?? "회원가입 요청에 실패했습니다. 다시 시도해 주세요.",
+      );
     } finally {
       setIsSubmitting(false);
     }
