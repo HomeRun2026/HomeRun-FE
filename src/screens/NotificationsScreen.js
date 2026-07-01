@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     gap: 14,
   },
   card: {
-    width: 328,
+    width: "100%",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 16,

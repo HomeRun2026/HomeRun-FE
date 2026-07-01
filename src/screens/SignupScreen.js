@@ -21,7 +21,7 @@ import VisibleIcon from "../../assets/images/icon_visible.svg";
 import { colors, layout, typography } from "../theme";
 
 export function SignupScreen({ onBackPress, onNextPress }) {
-  const { width } = useWindowDimensions();
+  const { height, width } = useWindowDimensions();
   const [email, setEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [password, setPassword] = useState("");
@@ -136,8 +136,9 @@ export function SignupScreen({ onBackPress, onNextPress }) {
   const isEmailEntered = email.trim().length > 0;
   const isVerificationCodeEntered = verificationCode.trim().length > 0;
   const availableContentWidth =
-    Math.min(width, layout.maxPhoneWidth) - layout.screenMargin * 2;
+    width - layout.screenMargin * 2;
   const shouldShowInputPreview = availableContentWidth < 340;
+  const shouldUseInlineFooter = width > height || height < 640;
 
   const handleNextPress = () => {
     if (!trimmedEmail || !password || !passwordConfirm || !trimmedNickname) {
@@ -162,6 +163,16 @@ export function SignupScreen({ onBackPress, onNextPress }) {
       passwordConfirm,
     });
   };
+
+  const nextButton = (
+    <PrimaryButton
+      onPress={handleNextPress}
+      style={styles.nextButton}
+      textStyle={styles.nextText}
+    >
+      다음
+    </PrimaryButton>
+  );
 
   return (
     <AppScreen>
@@ -280,19 +291,15 @@ export function SignupScreen({ onBackPress, onNextPress }) {
               style={[styles.stretchInput, styles.nicknameInput]}
               value={nickname}
             />
+
+            {shouldUseInlineFooter && (
+              <View style={styles.inlineFooter}>{nextButton}</View>
+            )}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
 
-      <View style={styles.footer}>
-        <PrimaryButton
-          onPress={handleNextPress}
-          style={styles.nextButton}
-          textStyle={styles.nextText}
-        >
-          다음
-        </PrimaryButton>
-      </View>
+      {!shouldUseInlineFooter && <View style={styles.footer}>{nextButton}</View>}
     </AppScreen>
   );
 }
@@ -528,10 +535,14 @@ const styles = StyleSheet.create({
     paddingBottom: 64,
     alignItems: "center",
   },
+  inlineFooter: {
+    marginTop: 24,
+    paddingBottom: 24,
+    alignItems: "center",
+  },
   nextButton: {
     display: "flex",
-    width: 328,
-    maxWidth: "100%",
+    width: "100%",
     height: 54,
     padding: 10,
     alignItems: "center",

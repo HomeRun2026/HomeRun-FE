@@ -13,7 +13,7 @@ import RightIcon from "../../assets/images/R.svg";
 import packageJson from "../../package.json";
 import { getMyPage } from "../../api/mypage";
 import { AppScreen } from "../components";
-import { colors, layout, typography } from "../theme";
+import { colors, typography } from "../theme";
 
 const defaultMyPageInfo = {
   appVersion: packageJson.version,
@@ -300,9 +300,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray01,
   },
   header: {
-    alignSelf: "center",
     width: "100%",
-    maxWidth: layout.maxPhoneWidth,
     height: 58,
     paddingHorizontal: 16,
     flexDirection: "row",

@@ -113,8 +113,7 @@ const styles = StyleSheet.create({
   },
   input: {
     display: "flex",
-    width: 328,
-    maxWidth: "100%",
+    width: "100%",
     height: 54,
     padding: 16,
     alignItems: "center",
@@ -144,8 +143,7 @@ const styles = StyleSheet.create({
   },
   confirmButton: {
     display: "flex",
-    width: 328,
-    maxWidth: "100%",
+    width: "100%",
     height: 54,
     padding: 10,
     alignItems: "center",
