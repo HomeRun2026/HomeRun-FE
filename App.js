@@ -19,31 +19,10 @@ import {
   TermsAgreementScreen,
   TermsOfServiceScreen,
 } from "./src/screens";
+import { linking } from "./linking";
 import { routes } from "./src/navigation/routes";
 
 const Stack = createNativeStackNavigator();
-
-const linking = {
-  prefixes: [],
-  config: {
-    screens: {
-      [routes.login]: "",
-      [routes.signup]: "signup",
-      [routes.termsAgreement]: "signup/terms",
-      [routes.signupComplete]: "signup/complete",
-      [routes.home]: "home",
-      [routes.findPassword]: "find-password",
-      [routes.accountInfo]: "account-info",
-      [routes.changePassword]: "change-password",
-      [routes.inquiry]: "inquiry",
-      [routes.notices]: "notices",
-      [routes.noticeDetail]: "notices/detail",
-      [routes.notifications]: "notifications",
-      [routes.privacyPolicy]: "privacy",
-      [routes.termsOfService]: "terms",
-    },
-  },
-};
 
 function resetTo(navigation, name, params) {
   navigation.reset({
@@ -112,18 +91,63 @@ function HomeRoute({ navigation, route }) {
       onOpenPassword={() => navigation.navigate(routes.changePassword)}
       onOpenPrivacy={() => navigation.navigate(routes.privacyPolicy)}
       onOpenTerms={() => navigation.navigate(routes.termsOfService)}
+      onTabPress={(tabKey) => {
+        if (tabKey === "home") {
+          navigation.navigate(routes.home);
+          return true;
+        }
+
+        if (tabKey === "myPage") {
+          navigation.navigate(routes.myPage);
+          return true;
+        }
+
+        return false;
+      }}
+    />
+  );
+}
+
+function MyPageRoute({ navigation }) {
+  return (
+    <HomeScreen
+      initialTab="myPage"
+      onOpenAccountInfo={() => navigation.navigate(routes.accountInfo)}
+      onOpenContact={() => navigation.navigate(routes.inquiry)}
+      onOpenNotices={() => navigation.navigate(routes.notices)}
+      onOpenNotifications={() => navigation.navigate(routes.notifications)}
+      onOpenPassword={() => navigation.navigate(routes.changePassword)}
+      onOpenPrivacy={() => navigation.navigate(routes.privacyPolicy)}
+      onOpenTerms={() => navigation.navigate(routes.termsOfService)}
+      onTabPress={(tabKey) => {
+        if (tabKey === "home") {
+          navigation.navigate(routes.home);
+          return true;
+        }
+
+        if (tabKey === "myPage") {
+          navigation.navigate(routes.myPage);
+          return true;
+        }
+
+        return false;
+      }}
     />
   );
 }
 
 function InquiryRoute({ navigation }) {
-  return <InquiryScreen onBackPress={() => goBackOrReset(navigation)} />;
+  return (
+    <InquiryScreen
+      onBackPress={() => goBackOrReset(navigation, routes.myPage)}
+    />
+  );
 }
 
 function NoticesRoute({ navigation }) {
   return (
     <NoticesScreen
-      onBackPress={() => goBackOrReset(navigation)}
+      onBackPress={() => goBackOrReset(navigation, routes.myPage)}
       onNoticePress={(notice) =>
         navigation.navigate(routes.noticeDetail, { notice })
       }
@@ -141,22 +165,34 @@ function NoticeDetailRoute({ navigation, route }) {
 }
 
 function PrivacyPolicyRoute({ navigation }) {
-  return <PrivacyPolicyScreen onBackPress={() => goBackOrReset(navigation)} />;
+  return (
+    <PrivacyPolicyScreen
+      onBackPress={() => goBackOrReset(navigation, routes.myPage)}
+    />
+  );
 }
 
 function TermsOfServiceRoute({ navigation }) {
-  return <TermsOfServiceScreen onBackPress={() => goBackOrReset(navigation)} />;
+  return (
+    <TermsOfServiceScreen
+      onBackPress={() => goBackOrReset(navigation, routes.myPage)}
+    />
+  );
 }
 
 function NotificationsRoute({ navigation }) {
-  return <NotificationsScreen onBackPress={() => goBackOrReset(navigation)} />;
+  return (
+    <NotificationsScreen
+      onBackPress={() => goBackOrReset(navigation, routes.myPage)}
+    />
+  );
 }
 
 function AccountInfoRoute({ navigation }) {
   return (
     <AccountInfoScreen
-      onBackPress={() => goBackOrReset(navigation)}
-      onConfirmPress={() => goBackOrReset(navigation)}
+      onBackPress={() => goBackOrReset(navigation, routes.myPage)}
+      onConfirmPress={() => goBackOrReset(navigation, routes.myPage)}
     />
   );
 }
@@ -164,8 +200,8 @@ function AccountInfoRoute({ navigation }) {
 function ChangePasswordRoute({ navigation }) {
   return (
     <ChangePasswordScreen
-      onBackPress={() => goBackOrReset(navigation)}
-      onConfirmPress={() => goBackOrReset(navigation)}
+      onBackPress={() => goBackOrReset(navigation, routes.myPage)}
+      onConfirmPress={() => goBackOrReset(navigation, routes.myPage)}
     />
   );
 }
@@ -200,6 +236,7 @@ export default function App() {
             name={routes.signupComplete}
           />
           <Stack.Screen component={HomeRoute} name={routes.home} />
+          <Stack.Screen component={MyPageRoute} name={routes.myPage} />
           <Stack.Screen component={InquiryRoute} name={routes.inquiry} />
           <Stack.Screen component={NoticesRoute} name={routes.notices} />
           <Stack.Screen

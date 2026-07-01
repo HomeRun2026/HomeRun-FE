@@ -48,8 +48,16 @@ export function HomeScreen({
   onOpenContact,
   onOpenPrivacy,
   onOpenTerms,
+  onTabPress,
 }) {
   const [activeTab, setActiveTab] = useState(initialTab);
+  const handleTabPress = (tabKey) => {
+    if (onTabPress?.(tabKey)) {
+      return;
+    }
+
+    setActiveTab(tabKey);
+  };
 
   return (
     <View style={styles.screen}>
@@ -102,7 +110,7 @@ export function HomeScreen({
                   accessibilityRole="button"
                   accessibilityState={{ selected }}
                   key={key}
-                  onPress={() => setActiveTab(key)}
+                  onPress={() => handleTabPress(key)}
                   style={styles.tabItem}
                 >
                   <Icon height={tabIconSize} width={tabIconSize} />
