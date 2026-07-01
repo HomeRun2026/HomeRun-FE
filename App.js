@@ -23,6 +23,28 @@ import { routes } from "./src/navigation/routes";
 
 const Stack = createNativeStackNavigator();
 
+const linking = {
+  prefixes: [],
+  config: {
+    screens: {
+      [routes.login]: "",
+      [routes.signup]: "signup",
+      [routes.termsAgreement]: "signup/terms",
+      [routes.signupComplete]: "signup/complete",
+      [routes.home]: "home",
+      [routes.findPassword]: "find-password",
+      [routes.accountInfo]: "account-info",
+      [routes.changePassword]: "change-password",
+      [routes.inquiry]: "inquiry",
+      [routes.notices]: "notices",
+      [routes.noticeDetail]: "notices/detail",
+      [routes.notifications]: "notifications",
+      [routes.privacyPolicy]: "privacy",
+      [routes.termsOfService]: "terms",
+    },
+  },
+};
+
 function resetTo(navigation, name, params) {
   navigation.reset({
     index: 0,
@@ -160,7 +182,7 @@ function FindPasswordRoute({ navigation }) {
 export default function App() {
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
+      <NavigationContainer linking={linking}>
         <Stack.Navigator
           initialRouteName={routes.login}
           screenOptions={{
