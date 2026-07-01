@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  useWindowDimensions,
   View,
 } from "react-native";
 
@@ -20,6 +21,7 @@ import VisibleIcon from "../../assets/images/icon_visible.svg";
 import { colors, layout, typography } from "../theme";
 
 export function SignupScreen({ onBackPress, onNextPress }) {
+  const { width } = useWindowDimensions();
   const [email, setEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [password, setPassword] = useState("");
@@ -28,6 +30,7 @@ export function SignupScreen({ onBackPress, onNextPress }) {
   const [verifiedEmail, setVerifiedEmail] = useState("");
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [isVerifyingEmail, setIsVerifyingEmail] = useState(false);
+  const [emailStatus, setEmailStatus] = useState(null);
 
   const trimmedEmail = email.trim();
   const trimmedNickname = nickname.trim();
@@ -36,6 +39,7 @@ export function SignupScreen({ onBackPress, onNextPress }) {
 
   const handleEmailChange = (value) => {
     setEmail(value);
+    setEmailStatus(null);
 
     if (verifiedEmail && value.trim() !== verifiedEmail) {
       setVerifiedEmail("");
@@ -44,20 +48,39 @@ export function SignupScreen({ onBackPress, onNextPress }) {
 
   const handleSendEmailCode = async () => {
     if (!trimmedEmail) {
+      setEmailStatus({
+        type: "error",
+        message: "이메일을 입력해 주세요.",
+      });
       Alert.alert("회원가입", "이메일을 입력해 주세요.");
       return;
     }
 
+    setEmailStatus({
+      type: "info",
+      message: "인증번호를 요청하고 있습니다.",
+    });
     setIsSendingEmail(true);
 
     try {
       await sendEmailVerificationCode({ email: trimmedEmail });
       setVerifiedEmail("");
+      setEmailStatus({
+        type: "success",
+        message: "인증번호를 이메일로 보냈습니다.",
+      });
       Alert.alert("회원가입", "인증번호를 이메일로 보냈습니다.");
     } catch (error) {
+      const errorMessage =
+        error?.message ?? "인증번호 발송에 실패했습니다. 다시 시도해 주세요.";
+
+      setEmailStatus({
+        type: "error",
+        message: errorMessage,
+      });
       Alert.alert(
         "회원가입",
-        error?.message ?? "인증번호 발송에 실패했습니다. 다시 시도해 주세요.",
+        errorMessage,
       );
     } finally {
       setIsSendingEmail(false);
@@ -66,10 +89,18 @@ export function SignupScreen({ onBackPress, onNextPress }) {
 
   const handleVerifyEmailCode = async () => {
     if (!trimmedEmail || !trimmedVerificationCode) {
+      setEmailStatus({
+        type: "error",
+        message: "이메일과 인증번호를 입력해 주세요.",
+      });
       Alert.alert("회원가입", "이메일과 인증번호를 입력해 주세요.");
       return;
     }
 
+    setEmailStatus({
+      type: "info",
+      message: "인증번호를 확인하고 있습니다.",
+    });
     setIsVerifyingEmail(true);
 
     try {
@@ -78,12 +109,23 @@ export function SignupScreen({ onBackPress, onNextPress }) {
         code: trimmedVerificationCode,
       });
       setVerifiedEmail(trimmedEmail);
+      setEmailStatus({
+        type: "success",
+        message: "이메일 인증이 완료되었습니다.",
+      });
       Alert.alert("회원가입", "이메일 인증이 완료되었습니다.");
     } catch (error) {
+      const errorMessage =
+        error?.message ?? "인증번호 확인에 실패했습니다. 다시 시도해 주세요.";
+
       setVerifiedEmail("");
+      setEmailStatus({
+        type: "error",
+        message: errorMessage,
+      });
       Alert.alert(
         "회원가입",
-        error?.message ?? "인증번호 확인에 실패했습니다. 다시 시도해 주세요.",
+        errorMessage,
       );
     } finally {
       setIsVerifyingEmail(false);
@@ -93,6 +135,9 @@ export function SignupScreen({ onBackPress, onNextPress }) {
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const isEmailEntered = email.trim().length > 0;
   const isVerificationCodeEntered = verificationCode.trim().length > 0;
+  const availableContentWidth =
+    Math.min(width, layout.maxPhoneWidth) - layout.screenMargin * 2;
+  const shouldShowInputPreview = availableContentWidth < 340;
 
   const handleNextPress = () => {
     if (!trimmedEmail || !password || !passwordConfirm || !trimmedNickname) {
@@ -153,8 +198,19 @@ export function SignupScreen({ onBackPress, onNextPress }) {
                   style={styles.emailInput}
                   value={email}
                 />
-                <SideButton>인증</SideButton>
+                <SideButton
+                  active={isEmailEntered}
+                  disabled={isSendingEmail}
+                  onPress={handleSendEmailCode}
+                >
+                  {isSendingEmail ? "전송" : "인증"}
+                </SideButton>
               </View>
+              {shouldShowInputPreview && trimmedEmail && (
+                <Text style={styles.inputPreview}>
+                  이메일 : {trimmedEmail}
+                </Text>
+              )}
               <View style={styles.row}>
                 <SignupInput
                   keyboardType="number-pad"
@@ -163,13 +219,30 @@ export function SignupScreen({ onBackPress, onNextPress }) {
                   style={styles.emailInput}
                   value={verificationCode}
                 />
-                <SideButton active={isVerificationCodeEntered}
+                <SideButton
+                  active={isVerificationCodeEntered}
                   disabled={isVerifyingEmail}
                   onPress={handleVerifyEmailCode}
                 >
                   {isEmailVerified ? "완료" : isVerifyingEmail ? "확인" : "확인"}
                 </SideButton>
               </View>
+              {shouldShowInputPreview && trimmedVerificationCode && (
+                <Text style={styles.inputPreview}>
+                  인증번호: {trimmedVerificationCode}
+                </Text>
+              )}
+              {emailStatus && (
+                <Text
+                  style={[
+                    styles.emailStatus,
+                    emailStatus.type === "success" && styles.emailStatusSuccess,
+                    emailStatus.type === "error" && styles.emailStatusError,
+                  ]}
+                >
+                  {emailStatus.message}
+                </Text>
+              )}
             </View>
 
             <View style={styles.passwordGroup}>
@@ -269,12 +342,17 @@ function PasswordInput({
   );
 }
 
-function SideButton({ active, children }) {
+function SideButton({ active, children, disabled = false, onPress }) {
   return (
     <Pressable
       disabled={disabled}
       onPress={onPress}
-      style={[[styles.sideButton, active && styles.sideButtonActive], disabled && styles.disabled]}
+      // 인증 요청 중에는 버튼을 비활성화해서 중복 요청을 막습니다.
+      style={[
+        styles.sideButton,
+        active && styles.sideButtonActive,
+        disabled && styles.disabled,
+      ]}
     >
       <Text
         style={[styles.sideButtonText, active && styles.sideButtonTextActive]}
@@ -325,22 +403,21 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   emailGroup: {
-    height: 116,
     gap: 8,
   },
   row: {
-    flex: 1,
     flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   emailInput: {
     display: "flex",
-    width: 236,
+    flex: 1,
+    minWidth: 0,
     height: 54,
     padding: 16,
     alignItems: "center",
     gap: 10,
-    flexShrink: 0,
   },
   stretchInput: {
     display: "flex",
@@ -373,11 +450,10 @@ const styles = StyleSheet.create({
   },
   sideButton: {
     display: "flex",
-    flexGrow: 1,
     flexShrink: 0,
-    flexBasis: 0,
+    width: 72,
     height: 54,
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
@@ -396,6 +472,27 @@ const styles = StyleSheet.create({
   },
   sideButtonTextActive: {
     color: colors.white,
+  },
+  inputPreview: {
+    ...typography.caption01M,
+    lineHeight: 18,
+    letterSpacing: -0.12,
+    color: colors.gray06,
+  },
+  emailStatus: {
+    ...typography.caption01M,
+    lineHeight: 18,
+    letterSpacing: -0.12,
+    color: colors.gray07,
+  },
+  emailStatusSuccess: {
+    color: colors.main,
+  },
+  emailStatusError: {
+    color: colors.point,
+  },
+  disabled: {
+    opacity: 0.6,
   },
   passwordGroup: {
     marginTop: 32,
