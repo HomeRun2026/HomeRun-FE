@@ -43,13 +43,8 @@ export function SignupCompleteScreen({ onHomePress, onLoginPress }) {
 
 const styles = StyleSheet.create({
   completeBox: {
-    width: 360,
-    height: 800,
-    maxWidth: "100%",
-    maxHeight: "100%",
-    alignSelf: "center",
-    borderRadius: 16,
-    overflow: "hidden",
+    flex: 1,
+    width: "100%",
     backgroundColor: colors.white,
   },
   container: {
@@ -70,7 +65,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray03,
   },
   messageBox: {
-    marginTop: 152,
+    marginTop: 96,
     alignItems: "center",
     gap: 20,
   },

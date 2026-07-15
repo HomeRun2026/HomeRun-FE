@@ -9,7 +9,7 @@ import SettingIcon from "../../public/images/setting.svg";
 import { HomeTopSection, MainTabBar } from "../components";
 import { CustomAlarmScreen } from "./CustomAlarmScreen";
 import { MyPageScreen } from "./MyPageScreen";
-import { colors, layout, typography } from "../theme";
+import { colors, typography } from "../theme";
 
 const homeBackground = colors.gray01;
 
@@ -23,9 +23,18 @@ export function HomeScreen({
   onOpenContact,
   onOpenPrivacy,
   onOpenTerms,
+  onTabPress,
 }) {
   const [activeTab, setActiveTab] = useState(initialTab);
   const [activeHomeTab, setActiveHomeTab] = useState("firstLast");
+
+  const handleTabPress = (tabKey) => {
+    if (onTabPress?.(tabKey)) {
+      return;
+    }
+
+    setActiveTab(tabKey);
+  };
 
   return (
     <View style={styles.screen}>
@@ -66,7 +75,7 @@ export function HomeScreen({
           ) : null}
         </View>
 
-        <MainTabBar activeTab={activeTab} onTabPress={setActiveTab} />
+        <MainTabBar activeTab={activeTab} onTabPress={handleTabPress} />
       </View>
     </View>
   );
@@ -170,9 +179,7 @@ const styles = StyleSheet.create({
   },
   phone: {
     flex: 1,
-    alignSelf: "center",
     width: "100%",
-    maxWidth: layout.maxPhoneWidth,
     backgroundColor: homeBackground,
   },
   content: {

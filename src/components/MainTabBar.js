@@ -7,7 +7,7 @@ import HomeIn from "../../assets/images/Home_in.svg";
 import HomeOut from "../../assets/images/Home_out.svg";
 import MypageIn from "../../assets/images/Mypage_in.svg";
 import MypageOut from "../../assets/images/Mypage_out.svg";
-import { colors, layout, typography } from "../theme";
+import { colors, typography } from "../theme";
 
 const homeBackground = colors.gray01;
 const tabIconSize = 32;
@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
   tabBarShadow: {
     position: "absolute",
     width: "100%",
-    maxWidth: layout.maxPhoneWidth,
     height: 12,
     overflow: "hidden",
   },
@@ -106,14 +105,13 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     width: "100%",
-    maxWidth: layout.maxPhoneWidth,
     paddingTop: 16,
     paddingRight: 38,
     paddingBottom: 24,
     paddingLeft: 38,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     gap: 22,
     backgroundColor: colors.white,
     borderTopLeftRadius: 16,

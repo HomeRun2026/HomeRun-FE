@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
 import MailIcon from "../../assets/images/icon_mail.svg";
@@ -9,9 +9,9 @@ import PenIcon from "../../assets/images/icon_pen.svg";
 import LockIcon from "../../assets/images/icon_lock.svg";
 import RightIcon from "../../assets/images/R.svg";
 import packageJson from "../../package.json";
+import { getMyPage } from "../../api/mypage";
 import { AppScreen, HomeTopSection } from "../components";
 import { colors, typography } from "../theme";
-import { buildApiUrl } from "../config/api";
 
 const defaultMyPageInfo = {
   appVersion: packageJson.version,
@@ -55,13 +55,7 @@ export function MyPageScreen({
 
     async function loadMyPageInfo() {
       try {
-        const response = await fetch(buildApiUrl("/api/mypage"));
-
-        if (!response.ok) {
-          throw new Error("Failed to load mypage");
-        }
-
-        const data = await response.json();
+        const data = await getMyPage();
 
         if (!isActive) {
           return;

@@ -5,7 +5,7 @@ import BackIconDefault from "../../assets/images/L.svg";
 import BellIcon from "../../assets/images/icon_bell.svg";
 import BellNoneIcon from "../../assets/images/icon_bell_none.svg";
 import HomerunLogo from "../../assets/images/homerun_logo.svg";
-import { colors, layout, typography } from "../theme";
+import { colors, typography } from "../theme";
 
 const MAIN_BACKGROUND = "#FCFDFE";
 const SUB_BACKGROUND = colors.white;
@@ -103,9 +103,7 @@ const styles = StyleSheet.create({
     height: 24,
   },
   header: {
-    alignSelf: "center",
     width: "100%",
-    maxWidth: layout.maxPhoneWidth,
     flexDirection: "row",
     alignItems: "center",
     borderBottomWidth: 1,

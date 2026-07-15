@@ -1,6 +1,18 @@
 import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { login } from "../../api/auth/login";
+import { extractAuthTokens, setAuthTokens } from "../../api/auth/tokens";
+import { startGoogleAuth } from "../../api/google";
 import {
   AppScreen,
   FormTextInput,
@@ -17,52 +29,169 @@ export function LoginScreen({
   onSignupPress,
   onFindPasswordPress,
 }) {
+  const { height, width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const availableHeight = Math.max(height - insets.top - insets.bottom, 1);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const handleLoginPress = () => {
-    onLoginPress?.();
+  // 가로로 긴 화면처럼 높이가 낮을 때도 전체 로그인 요소가 같은 비율로 화면 안에 들어오도록 조절합니다.
+  const isShortHeight = availableHeight < 600;
+  const isWideRoomy = width > height && width >= 900 && availableHeight >= 700;
+  const layoutScale = Math.min(Math.max(availableHeight / 760, 0.78), 1);
+  const verticalScale = isShortHeight ? layoutScale * 0.65 : layoutScale;
+  const logoScale = isWideRoomy ? 1.32 : 1;
+  const socialButtonSize = Math.round(Math.max(42, 54 * layoutScale));
+  const socialIconSize = Math.round(32 * layoutScale);
+  const kakaoSocialIconSize = Math.round(34 * layoutScale);
+  const controlHeight = Math.round(Math.max(42, 54 * layoutScale));
+  const verticalPadding = Math.round(
+    Math.max(
+      isShortHeight ? 12 : 20,
+      Math.min(isShortHeight ? 24 : 48, availableHeight * 0.04),
+    ),
+  );
+  const responsiveLayout = {
+    scrollContent: {
+      paddingTop: verticalPadding,
+      paddingBottom: verticalPadding,
+    },
+    content: {
+      transform: [{ translateY: isWideRoomy ? -18 : 0 }],
+    },
+    logo: {
+      marginBottom: Math.round(
+        Math.max(isShortHeight ? 12 : 18, 44 * verticalScale),
+      ),
+      transform: [{ translateY: isWideRoomy ? -22 : 0 }],
+    },
+    input: {
+      height: controlHeight,
+      paddingVertical: Math.round(Math.max(10, 16 * layoutScale)),
+    },
+    form: {
+      gap: Math.round(Math.max(4, 8 * verticalScale)),
+    },
+    loginButton: {
+      height: controlHeight,
+      marginTop: Math.round(Math.max(2, 4 * verticalScale)),
+    },
+    options: {
+      marginTop: Math.round(Math.max(6, 12 * verticalScale)),
+    },
+    simple: {
+      marginTop: Math.round(Math.max(10, 36 * verticalScale)),
+      gap: Math.round(Math.max(12, 24 * layoutScale)),
+    },
+    social: {
+      marginTop: Math.round(isWideRoomy ? 18 : Math.max(10, 24 * verticalScale)),
+      gap: Math.round(Math.max(18, 36 * layoutScale)),
+      transform: [{ translateY: isWideRoomy ? -4 : 0 }],
+    },
+    socialButton: {
+      width: socialButtonSize,
+      height: socialButtonSize,
+      borderRadius: socialButtonSize / 2,
+    },
   };
-  const handleSignupPress = () => {
-    onSignupPress?.();
+
+  const handleLoginPress = async () => {
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail || !password) {
+      Alert.alert("로그인", "이메일과 비밀번호를 입력해 주세요.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const loginResponse = await login({
+        email: trimmedEmail,
+        password,
+      });
+
+      setAuthTokens(extractAuthTokens(loginResponse));
+      onLoginPress?.();
+    } catch (error) {
+      Alert.alert(
+        "로그인",
+        error?.message ?? "로그인에 실패했습니다. 다시 시도해 주세요.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-  const handleFindPasswordPress = () => {
-    onFindPasswordPress?.();
+
+  const handleGooglePress = async () => {
+    setIsGoogleLoading(true);
+
+    try {
+      await startGoogleAuth();
+    } catch {
+      Alert.alert("구글 로그인", "구글 로그인을 시작하지 못했습니다. 다시 시도해 주세요.");
+    } finally {
+      setIsGoogleLoading(false);
+    }
   };
 
   return (
     <AppScreen>
-      <View style={styles.content}>
-        <HomerunLogo
-          accessibilityLabel="홈런"
-          height={58}
-          style={styles.logo}
-          width={150}
-        />
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollContent,
+          responsiveLayout.scrollContent,
+        ]}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        style={styles.scroller}
+      >
+        <View style={[styles.content, responsiveLayout.content]}>
+          <HomerunLogo
+            accessibilityLabel="홈런"
+            height={Math.round(58 * layoutScale * logoScale)}
+            style={[styles.logo, responsiveLayout.logo]}
+            width={Math.round(150 * layoutScale * logoScale)}
+          />
 
-        <View style={styles.form}>
+        <View style={[styles.form, responsiveLayout.form]}>
           <FormTextInput
             autoCapitalize="none"
             autoComplete="email"
             keyboardType="email-address"
+            onChangeText={setEmail}
             placeholder="이메일"
+            style={responsiveLayout.input}
+            value={email}
           />
           <PasswordInput
             autoCapitalize="none"
             autoComplete="password"
+            onChangeText={setPassword}
             onToggleVisibility={() => setShowPassword((value) => !value)}
             placeholder="비밀번호"
             secureTextEntry={!showPassword}
+            style={responsiveLayout.input}
+            value={password}
           />
           <PrimaryButton
+            disabled={isSubmitting}
             onPress={handleLoginPress}
-            style={styles.loginButton}
+            style={[
+              styles.loginButton,
+              responsiveLayout.loginButton,
+              isSubmitting && styles.disabled,
+            ]}
             textStyle={styles.loginButtonText}
           >
             로그인
           </PrimaryButton>
         </View>
 
-        <View style={styles.options}>
+        <View style={[styles.options, responsiveLayout.options]}>
           <Pressable
             accessibilityRole="checkbox"
             accessibilityState={{ checked: remember }}
@@ -77,7 +206,7 @@ export function LoginScreen({
             <Pressable
               accessibilityRole="button"
               hitSlop={12}
-              onPress={handleSignupPress}
+              onPress={() => onSignupPress?.()}
               style={styles.linkButton}
             >
               <Text style={styles.optionText}>회원가입</Text>
@@ -86,7 +215,7 @@ export function LoginScreen({
             <Pressable
               accessibilityRole="button"
               hitSlop={12}
-              onPress={handleFindPasswordPress}
+              onPress={onFindPasswordPress}
               style={styles.linkButton}
             >
               <Text style={styles.optionText}>비밀번호 찾기</Text>
@@ -94,14 +223,22 @@ export function LoginScreen({
           </View>
         </View>
 
-        <View style={styles.simple}>
+        <View style={[styles.simple, responsiveLayout.simple]}>
           <View style={styles.simpleLine} />
           <Text style={styles.simpleText}>간편 로그인</Text>
           <View style={styles.simpleLine} />
         </View>
 
-        <SocialLoginButtons />
-      </View>
+        <SocialLoginButtons
+          buttonStyle={responsiveLayout.socialButton}
+          iconSize={socialIconSize}
+          isGoogleLoading={isGoogleLoading}
+          kakaoIconSize={kakaoSocialIconSize}
+          onGooglePress={handleGooglePress}
+          style={responsiveLayout.social}
+        />
+        </View>
+      </ScrollView>
     </AppScreen>
   );
 }
@@ -135,18 +272,20 @@ function PasswordInput({
 }
 
 const styles = StyleSheet.create({
-  content: {
+  scroller: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+  },
+  content: {
     marginHorizontal: layout.screenMargin,
-    paddingTop: 204,
   },
   logo: {
     alignSelf: "center",
-    marginBottom: 44,
   },
-  form: {
-    gap: 8,
-  },
+  form: {},
   passwordInputWrap: {
     justifyContent: "center",
   },
@@ -164,24 +303,14 @@ const styles = StyleSheet.create({
   loginButton: {
     display: "flex",
     height: 54,
-    marginTop: 4,
-    padding: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 10,
-    alignSelf: "stretch",
-    borderRadius: 8,
-    backgroundColor: colors.main,
   },
   loginButtonText: {
     ...typography.body01Sb,
-    color: colors.white,
-    fontStyle: "normal",
-    letterSpacing: -0.16,
-    textAlign: "center",
+  },
+  disabled: {
+    opacity: 0.6,
   },
   options: {
-    marginTop: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -227,10 +356,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray05,
   },
   simple: {
-    marginTop: 36,
     flexDirection: "row",
     alignItems: "center",
-    gap: 24,
   },
   simpleLine: {
     flex: 1,
