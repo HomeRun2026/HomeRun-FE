@@ -1,8 +1,6 @@
 ﻿import React, { useEffect, useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
-import BellIcon from "../../assets/images/icon_bell.svg";
-import BellNoneIcon from "../../assets/images/icon_bell_none.svg";
 import MailIcon from "../../assets/images/icon_mail.svg";
 import MessageIcon from "../../assets/images/icon_message.svg";
 import MypageIcon from "../../assets/images/icon_mypage.svg";
@@ -12,7 +10,7 @@ import LockIcon from "../../assets/images/icon_lock.svg";
 import RightIcon from "../../assets/images/R.svg";
 import packageJson from "../../package.json";
 import { getMyPage } from "../../api/mypage";
-import { AppScreen } from "../components";
+import { AppScreen, HomeTopSection } from "../components";
 import { colors, typography } from "../theme";
 
 const defaultMyPageInfo = {
@@ -51,7 +49,6 @@ export function MyPageScreen({
 }) {
   const [withdrawStep, setWithdrawStep] = useState(null);
   const [myPageInfo, setMyPageInfo] = useState(defaultMyPageInfo);
-  const HeaderBellIcon = notificationCount > 0 ? BellIcon : BellNoneIcon;
 
   useEffect(() => {
     let isActive = true;
@@ -124,21 +121,13 @@ export function MyPageScreen({
   const content = (
     <View style={styles.container}>
       {showHeader ? (
-        <>
-          <View style={styles.topSpacer} />
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>마이페이지</Text>
-            <Pressable
-              accessibilityLabel="알림"
-              accessibilityRole="button"
-              hitSlop={12}
-              onPress={onOpenNotifications}
-              style={styles.bellButton}
-            >
-              <HeaderBellIcon height={31} width={36} />
-            </Pressable>
-          </View>
-        </>
+        <HomeTopSection
+          notificationCount={notificationCount}
+          onBellPress={onOpenNotifications}
+          showAddress={false}
+          showTabs={false}
+          title="마이페이지"
+        />
       ) : null}
 
       <View style={styles.body}>
@@ -294,31 +283,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.gray01,
-  },
-  topSpacer: {
-    height: 24,
-    backgroundColor: colors.gray01,
-  },
-  header: {
-    width: "100%",
-    height: 58,
-    paddingHorizontal: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray03,
-    backgroundColor: colors.gray01,
-  },
-  headerTitle: {
-    ...typography.head01Sb,
-    color: colors.black,
-  },
-  bellButton: {
-    width: 40,
-    height: 40,
-    alignItems: "center",
-    justifyContent: "center",
   },
   body: {
     flex: 1,
