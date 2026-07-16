@@ -22,6 +22,7 @@ import { colors, layout, typography } from "../theme";
 
 export function SignupScreen({ onBackPress, onNextPress }) {
   const { height, width } = useWindowDimensions();
+  const frameWidth = Math.min(width, layout.mobileFrameWidth);
   const [email, setEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [password, setPassword] = useState("");
@@ -136,9 +137,9 @@ export function SignupScreen({ onBackPress, onNextPress }) {
   const isEmailEntered = email.trim().length > 0;
   const isVerificationCodeEntered = verificationCode.trim().length > 0;
   const availableContentWidth =
-    width - layout.screenMargin * 2;
+    frameWidth - layout.screenMargin * 2;
   const shouldShowInputPreview = availableContentWidth < 340;
-  const shouldUseInlineFooter = width > height || height < 640;
+  const shouldUseInlineFooter = frameWidth > height || height < 640;
 
   const handleNextPress = () => {
     if (!trimmedEmail || !password || !passwordConfirm || !trimmedNickname) {

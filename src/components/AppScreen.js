@@ -1,9 +1,9 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { colors } from "../theme";
+import { colors, layout } from "../theme";
 
 export function AppScreen({ children }) {
   return (
@@ -25,5 +25,11 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     backgroundColor: colors.white,
+    ...Platform.select({
+      web: {
+        alignSelf: "center",
+        maxWidth: layout.mobileFrameWidth,
+      },
+    }),
   },
 });

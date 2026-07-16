@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
 import ArrowRightIcon from "../../assets/images/R.svg";
@@ -9,7 +9,7 @@ import SettingIcon from "../../public/images/setting.svg";
 import { HomeTopSection, MainTabBar } from "../components";
 import { CustomAlarmScreen } from "./CustomAlarmScreen";
 import { MyPageScreen } from "./MyPageScreen";
-import { colors, typography } from "../theme";
+import { colors, layout, typography } from "../theme";
 
 const homeBackground = colors.gray01;
 
@@ -181,6 +181,12 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     backgroundColor: homeBackground,
+    ...Platform.select({
+      web: {
+        alignSelf: "center",
+        maxWidth: layout.mobileFrameWidth,
+      },
+    }),
   },
   content: {
     flex: 1,

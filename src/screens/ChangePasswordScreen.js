@@ -19,10 +19,11 @@ import { colors, layout, typography } from "../theme";
 
 export function ChangePasswordScreen({ onBackPress, onConfirmPress }) {
   const { height, width } = useWindowDimensions();
+  const frameWidth = Math.min(width, layout.mobileFrameWidth);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showNewPasswordConfirm, setShowNewPasswordConfirm] = useState(false);
-  const shouldUseInlineFooter = width > height || height < 640;
+  const shouldUseInlineFooter = frameWidth > height || height < 640;
   const confirmButton = (
     <PrimaryButton onPress={onConfirmPress} style={styles.confirmButton}>
       확인

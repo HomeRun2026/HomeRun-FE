@@ -23,6 +23,7 @@ import { colors, layout, typography } from "../theme";
 
 export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
   const { height, width } = useWindowDimensions();
+  const frameWidth = Math.min(width, layout.mobileFrameWidth);
   const [email, setEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -41,9 +42,9 @@ export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
   const isVerificationCodeEntered = trimmedVerificationCode.length > 0;
   const isEmailVerified = Boolean(verifiedEmail && verifiedEmail === trimmedEmail);
   const availableContentWidth =
-    width - layout.screenMargin * 2;
+    frameWidth - layout.screenMargin * 2;
   const shouldShowInputPreview = availableContentWidth < 340;
-  const shouldUseInlineFooter = width > height || height < 640;
+  const shouldUseInlineFooter = frameWidth > height || height < 640;
 
   const handleEmailChange = (value) => {
     setEmail(value);

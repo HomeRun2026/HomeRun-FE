@@ -30,6 +30,7 @@ export function LoginScreen({
   onFindPasswordPress,
 }) {
   const { height, width } = useWindowDimensions();
+  const frameWidth = Math.min(width, layout.mobileFrameWidth);
   const insets = useSafeAreaInsets();
   const availableHeight = Math.max(height - insets.top - insets.bottom, 1);
   const [email, setEmail] = useState("");
@@ -40,7 +41,8 @@ export function LoginScreen({
   const [showPassword, setShowPassword] = useState(false);
   // 가로로 긴 화면처럼 높이가 낮을 때도 전체 로그인 요소가 같은 비율로 화면 안에 들어오도록 조절합니다.
   const isShortHeight = availableHeight < 600;
-  const isWideRoomy = width > height && width >= 900 && availableHeight >= 700;
+  const isWideRoomy =
+    frameWidth > height && frameWidth >= 900 && availableHeight >= 700;
   const layoutScale = Math.min(Math.max(availableHeight / 760, 0.78), 1);
   const verticalScale = isShortHeight ? layoutScale * 0.65 : layoutScale;
   const logoScale = isWideRoomy ? 1.32 : 1;
