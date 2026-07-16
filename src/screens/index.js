@@ -1,4 +1,5 @@
 export { AccountInfoScreen } from "./AccountInfoScreen";
+export { AddressManagementScreen } from "./AddressManagementScreen";
 export { ChangePasswordScreen } from "./ChangePasswordScreen";
 export { CustomAlarmScreen } from "./CustomAlarmScreen";
 export { DeleteAccountScreen } from "./DeleteAccountScreen";

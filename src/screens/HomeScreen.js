@@ -8,6 +8,7 @@ import CloseIcon from "../../public/images/close.svg";
 import LoadIcon from "../../public/images/load.svg";
 import SettingIcon from "../../public/images/setting.svg";
 import { HomeTopSection, MainTabBar } from "../components";
+import { AddressManagementScreen } from "./AddressManagementScreen";
 import { CustomAlarmScreen } from "./CustomAlarmScreen";
 import { MyPageScreen } from "./MyPageScreen";
 import { colors, layout, typography } from "../theme";
@@ -37,8 +38,11 @@ export function HomeScreen({
 }) {
   const [activeTab, setActiveTab] = useState(initialTab);
   const [activeHomeTab, setActiveHomeTab] = useState("firstLast");
+  const [isAddressManagerVisible, setIsAddressManagerVisible] = useState(false);
 
   const handleTabPress = (tabKey) => {
+    setIsAddressManagerVisible(false);
+
     if (onTabPress?.(tabKey)) {
       return;
     }
@@ -76,16 +80,25 @@ export function HomeScreen({
               </View>
             </>
           ) : activeTab === "home" ? (
-            <HomeDashboard
-              activeHomeTab={activeHomeTab}
-              notificationCount={notificationCount}
-              onBellPress={onOpenNotifications}
-              onHomeTabPress={setActiveHomeTab}
-            />
+            isAddressManagerVisible ? (
+              <AddressManagementScreen
+                onBackPress={() => setIsAddressManagerVisible(false)}
+              />
+            ) : (
+              <HomeDashboard
+                activeHomeTab={activeHomeTab}
+                notificationCount={notificationCount}
+                onAddressPress={() => setIsAddressManagerVisible(true)}
+                onBellPress={onOpenNotifications}
+                onHomeTabPress={setActiveHomeTab}
+              />
+            )
           ) : null}
         </View>
 
-        <MainTabBar activeTab={activeTab} onTabPress={handleTabPress} />
+        {isAddressManagerVisible ? null : (
+          <MainTabBar activeTab={activeTab} onTabPress={handleTabPress} />
+        )}
       </View>
     </View>
   );
@@ -94,6 +107,7 @@ export function HomeScreen({
 function HomeDashboard({
   activeHomeTab,
   notificationCount,
+  onAddressPress,
   onBellPress,
   onHomeTabPress,
 }) {
@@ -102,6 +116,7 @@ function HomeDashboard({
       <HomeTopSection
         activeTab={activeHomeTab}
         notificationCount={notificationCount}
+        onAddressPress={onAddressPress}
         onBellPress={onBellPress}
         onTabPress={onHomeTabPress}
       />

@@ -12,6 +12,7 @@ const homeBackground = colors.gray01;
 export function HomeTopSection({
   activeTab = "firstLast",
   notificationCount = 0,
+  onAddressPress,
   onBellPress,
   onTabPress,
   showAddress = true,
@@ -26,7 +27,11 @@ export function HomeTopSection({
       <View style={styles.homeTopSection}>
         <View style={styles.homeHeader}>
           {showAddress ? (
-            <Pressable accessibilityRole="button" style={styles.addressButton}>
+            <Pressable
+              accessibilityRole="button"
+              onPress={onAddressPress}
+              style={styles.addressButton}
+            >
               <MapIcon height={24} style={styles.addressMapIcon} width={24} />
               <Text style={styles.addressText}>주소 등록하기</Text>
               <ArrowRightIcon
