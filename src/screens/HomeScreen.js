@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { Modal, Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
 import ArrowRightIcon from "../../assets/images/R.svg";
 import ChangeIcon from "../../public/images/change.svg";
+import CloseIcon from "../../public/images/close.svg";
 import LoadIcon from "../../public/images/load.svg";
 import SettingIcon from "../../public/images/setting.svg";
 import { HomeTopSection, MainTabBar } from "../components";
@@ -12,6 +13,15 @@ import { MyPageScreen } from "./MyPageScreen";
 import { colors, layout, typography } from "../theme";
 
 const homeBackground = colors.gray01;
+const PRE_DEPARTURE_ALARMS = [
+  { key: "1", label: "1분 전" },
+  { key: "3", label: "3분 전" },
+  { key: "5", label: "5분 전" },
+  { key: "10", label: "10분 전" },
+  { key: "15", label: "15분 전" },
+  { key: "30", label: "30분 전" },
+  { key: "60", label: "1시간 전" },
+];
 
 export function HomeScreen({
   notificationCount = 0,
@@ -106,6 +116,27 @@ function HomeDashboard({
 
 function FirstLastRouteScreen() {
   const [isLastRouteFirst, setIsLastRouteFirst] = useState(false);
+  const [isAlarmModalVisible, setIsAlarmModalVisible] = useState(false);
+  const [alarmSettings, setAlarmSettings] = useState({
+    1: false,
+    3: false,
+    5: true,
+    10: true,
+    15: false,
+    30: true,
+    60: false,
+  });
+
+  const closeAlarmModal = () => {
+    setIsAlarmModalVisible(false);
+  };
+
+  const toggleAlarm = (alarmKey) => {
+    setAlarmSettings((current) => ({
+      ...current,
+      [alarmKey]: !current[alarmKey],
+    }));
+  };
 
   return (
     <View style={styles.homeBody}>
@@ -165,9 +196,72 @@ function FirstLastRouteScreen() {
         </View>
         <View style={styles.noticeBubble}>
           <Text style={styles.noticeText}>출발 전 미리 알림을 설정할 수 있어요!</Text>
-          <SettingIcon height={20} width={20} />
+          <Pressable
+            accessibilityLabel="출발 전 미리 알림 설정"
+            accessibilityRole="button"
+            hitSlop={8}
+            onPress={() => setIsAlarmModalVisible(true)}
+            style={styles.noticeSettingButton}
+          >
+            <SettingIcon height={20} width={20} />
+          </Pressable>
         </View>
       </View>
+
+      <Modal
+        animationType="fade"
+        onRequestClose={closeAlarmModal}
+        transparent
+        visible={isAlarmModalVisible}
+      >
+        <View style={styles.alarmModalOverlay}>
+          <View style={styles.alarmModalCard}>
+            <View style={styles.alarmModalHeader}>
+              <Text style={styles.alarmModalTitle}>미리 알림 설정</Text>
+              <Pressable
+                accessibilityLabel="미리 알림 설정 닫기"
+                accessibilityRole="button"
+                hitSlop={10}
+                onPress={closeAlarmModal}
+                style={styles.alarmModalCloseButton}
+              >
+                <CloseIcon height={24} width={24} />
+              </Pressable>
+            </View>
+
+            <View style={styles.alarmList}>
+              {PRE_DEPARTURE_ALARMS.map((alarm) => {
+                const isEnabled = alarmSettings[alarm.key];
+
+                return (
+                  <View key={alarm.key} style={styles.alarmRow}>
+                    <Text style={styles.alarmLabel}>{alarm.label}</Text>
+                    <Pressable
+                      accessibilityLabel={`${alarm.label} 알림 ${
+                        isEnabled ? "끄기" : "켜기"
+                      }`}
+                      accessibilityRole="switch"
+                      accessibilityState={{ checked: isEnabled }}
+                      onPress={() => toggleAlarm(alarm.key)}
+                      style={[
+                        styles.alarmSwitch,
+                        isEnabled && styles.alarmSwitchOn,
+                      ]}
+                    >
+                      <View
+                        style={[
+                          styles.alarmSwitchThumb,
+                          isEnabled && styles.alarmSwitchThumbOn,
+                        ]}
+                      />
+                    </Pressable>
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -367,6 +461,100 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 8,
     borderBottomLeftRadius: 0,
     backgroundColor: colors.gray02,
+  },
+  noticeSettingButton: {
+    width: 24,
+    height: 24,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  alarmModalOverlay: {
+    flex: 1,
+    paddingTop: 144,
+    paddingHorizontal: 13,
+    backgroundColor: "rgba(52, 56, 59, 0.28)",
+  },
+  alarmModalCard: {
+    width: 328,
+    alignSelf: "center",
+    padding: 20,
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: 20,
+    borderRadius: 16,
+    backgroundColor: colors.white,
+    shadowColor: "#B9C8D0",
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 3,
+  },
+  alarmModalHeader: {
+    minHeight: 25,
+    alignSelf: "stretch",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  alarmModalTitle: {
+    fontFamily: "SUIT",
+    fontSize: 16,
+    fontStyle: "normal",
+    fontWeight: "600",
+    lineHeight: 22.4,
+    letterSpacing: -0.16,
+    color: colors.gray07,
+  },
+  alarmModalCloseButton: {
+    width: 24,
+    height: 24,
+    aspectRatio: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  alarmList: {
+    alignSelf: "stretch",
+    gap: 21,
+  },
+  alarmRow: {
+    minHeight: 35,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  alarmLabel: {
+    fontFamily: "SUIT",
+    fontSize: 20,
+    fontStyle: "normal",
+    fontWeight: "600",
+    lineHeight: 20,
+    letterSpacing: -0.2,
+    color: colors.gray08,
+  },
+  alarmSwitch: {
+    width: 44,
+    height: 26,
+    padding: 3,
+    alignItems: "flex-start",
+    justifyContent: "center",
+    borderRadius: 13,
+    backgroundColor: colors.gray05,
+  },
+  alarmSwitchOn: {
+    alignItems: "flex-end",
+    backgroundColor: colors.main,
+  },
+  alarmSwitchThumb: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: colors.white,
+  },
+  alarmSwitchThumbOn: {
+    backgroundColor: colors.white,
   },
   noticeText: {
     fontFamily: "SUIT",
