@@ -6,6 +6,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
   AccountInfoScreen,
   ChangePasswordScreen,
+  CustomAlarmScreen,
   FindEmailPasswordScreen,
   HomeScreen,
   InquiryScreen,
@@ -105,6 +106,12 @@ function HomeRoute({ navigation, route }) {
         return false;
       }}
     />
+  );
+}
+
+function CustomAlarmRoute({ navigation }) {
+  return (
+    <CustomAlarmScreen />
   );
 }
 
@@ -236,6 +243,7 @@ export default function App() {
             name={routes.signupComplete}
           />
           <Stack.Screen component={HomeRoute} name={routes.home} />
+          <Stack.Screen component={CustomAlarmRoute} name={routes.customAlarm} />
           <Stack.Screen component={MyPageRoute} name={routes.myPage} />
           <Stack.Screen component={InquiryRoute} name={routes.inquiry} />
           <Stack.Screen component={NoticesRoute} name={routes.notices} />

@@ -10,6 +10,7 @@ export const linking = {
       [routes.signupComplete]: "signup/complete",
       [routes.findPassword]: "find-password",
       [routes.home]: "home",
+      [routes.customAlarm]: "home/custom-alarm",
       [routes.myPage]: "home/mypage",
       [routes.accountInfo]: "home/mypage/account-info",
       [routes.changePassword]: "home/mypage/change-password",

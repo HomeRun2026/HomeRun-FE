@@ -4,6 +4,7 @@ export const routes = {
   termsAgreement: "TermsAgreement",
   signupComplete: "SignupComplete",
   home: "Home",
+  customAlarm: "CustomAlarm",
   myPage: "MyPage",
   changePassword: "ChangePassword",
   findPassword: "FindPassword",
