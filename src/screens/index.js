@@ -1,7 +1,7 @@
 export { AccountInfoScreen } from "./AccountInfoScreen";
 export { AddressManagementScreen } from "./AddressManagementScreen";
 export { ChangePasswordScreen } from "./ChangePasswordScreen";
-export { CustomAlarmScreen } from "./CustomAlarmScreen";
+export { CustomAlarmScreen } from "./home/custom-alarm/CustomAlarmScreen";
 export { DeleteAccountScreen } from "./DeleteAccountScreen";
 export { FindEmailPasswordScreen } from "./FindEmailPasswordScreen";
 export { HomeScreen } from "./HomeScreen";

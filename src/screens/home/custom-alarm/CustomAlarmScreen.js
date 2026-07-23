@@ -1,9 +1,9 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import MemoIcon from "../../public/images/memo.svg";
-import PlusIcon from "../../public/images/plus.svg";
-import { colors, typography } from "../theme";
+import MemoIcon from "../../../../public/images/memo.svg";
+import PlusIcon from "../../../../public/images/plus.svg";
+import { colors, typography } from "../../../theme";
 
 const alarmSections = [
   {
@@ -17,17 +17,23 @@ const alarmSections = [
   },
 ];
 
-export function CustomAlarmScreen() {
+export function CustomAlarmScreen({ onGarageDepartureAddPress }) {
   return (
     <View style={styles.body}>
       {alarmSections.map((section) => (
-        <AlarmSection key={section.key} section={section} />
+        <AlarmSection
+          key={section.key}
+          onAddPress={
+            section.key === "garage" ? onGarageDepartureAddPress : undefined
+          }
+          section={section}
+        />
       ))}
     </View>
   );
 }
 
-function AlarmSection({ section }) {
+function AlarmSection({ onAddPress, section }) {
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
@@ -37,6 +43,7 @@ function AlarmSection({ section }) {
             accessibilityLabel={`${section.title} 추가`}
             accessibilityRole="button"
             hitSlop={8}
+            onPress={onAddPress}
             style={styles.iconButton}
           >
             <PlusIcon height={24} width={24} />
