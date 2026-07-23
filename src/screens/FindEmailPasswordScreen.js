@@ -21,6 +21,15 @@ import BackIcon from "../../assets/images/L.svg";
 import { AppScreen, Header, PrimaryButton } from "../components";
 import { colors, layout, typography } from "../theme";
 
+const EMAIL_AUTH_STATUS = {
+  idle: "idle",
+  sending: "sending",
+  sent: "sent",
+  verifying: "verifying",
+  verified: "verified",
+  failed: "failed",
+};
+
 export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
   const { height, width } = useWindowDimensions();
   const frameWidth = Math.min(width, layout.mobileFrameWidth);
@@ -33,6 +42,9 @@ export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
   const [isVerifyingEmail, setIsVerifyingEmail] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailStatus, setEmailStatus] = useState(null);
+  const [emailAuthStatus, setEmailAuthStatus] = useState(
+    EMAIL_AUTH_STATUS.idle,
+  );
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showNewPasswordConfirm, setShowNewPasswordConfirm] = useState(false);
 
@@ -41,6 +53,26 @@ export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
   const isEmailEntered = trimmedEmail.length > 0;
   const isVerificationCodeEntered = trimmedVerificationCode.length > 0;
   const isEmailVerified = Boolean(verifiedEmail && verifiedEmail === trimmedEmail);
+  const canSendEmailCode =
+    isEmailEntered &&
+    !isSendingEmail &&
+    !isVerifyingEmail &&
+    emailAuthStatus !== EMAIL_AUTH_STATUS.sent &&
+    !isEmailVerified;
+  const canVerifyEmailCode =
+    isVerificationCodeEntered &&
+    emailAuthStatus === EMAIL_AUTH_STATUS.sent &&
+    !isSendingEmail &&
+    !isVerifyingEmail &&
+    !isEmailVerified;
+  const isSendEmailButtonActive =
+    isEmailEntered &&
+    (canSendEmailCode ||
+      isSendingEmail ||
+      emailAuthStatus === EMAIL_AUTH_STATUS.sent ||
+      isEmailVerified);
+  const isVerifyEmailButtonActive =
+    canVerifyEmailCode || isVerifyingEmail || isEmailVerified;
   const availableContentWidth =
     frameWidth - layout.screenMargin * 2;
   const shouldShowInputPreview = availableContentWidth < 340;
@@ -49,6 +81,7 @@ export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
   const handleEmailChange = (value) => {
     setEmail(value);
     setEmailStatus(null);
+    setEmailAuthStatus(EMAIL_AUTH_STATUS.idle);
 
     if (verifiedEmail && value.trim() !== verifiedEmail) {
       setVerifiedEmail("");
@@ -69,11 +102,13 @@ export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
       type: "info",
       message: "인증번호를 요청하고 있습니다.",
     });
+    setEmailAuthStatus(EMAIL_AUTH_STATUS.sending);
     setIsSendingEmail(true);
 
     try {
       await sendEmailVerificationCode({ email: trimmedEmail });
       setVerifiedEmail("");
+      setEmailAuthStatus(EMAIL_AUTH_STATUS.sent);
       setEmailStatus({
         type: "success",
         message: "인증번호를 이메일로 보냈습니다.",
@@ -87,6 +122,7 @@ export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
         type: "error",
         message: errorMessage,
       });
+      setEmailAuthStatus(EMAIL_AUTH_STATUS.idle);
       Alert.alert("비밀번호 찾기", errorMessage);
     } finally {
       setIsSendingEmail(false);
@@ -107,6 +143,7 @@ export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
       type: "info",
       message: "인증번호를 확인하고 있습니다.",
     });
+    setEmailAuthStatus(EMAIL_AUTH_STATUS.verifying);
     setIsVerifyingEmail(true);
 
     try {
@@ -115,6 +152,7 @@ export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
         code: trimmedVerificationCode,
       });
       setVerifiedEmail(trimmedEmail);
+      setEmailAuthStatus(EMAIL_AUTH_STATUS.verified);
       setEmailStatus({
         type: "success",
         message: "이메일 인증이 완료되었습니다.",
@@ -125,6 +163,7 @@ export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
         error?.message ?? "인증번호 확인에 실패했습니다. 다시 시도해 주세요.";
 
       setVerifiedEmail("");
+      setEmailAuthStatus(EMAIL_AUTH_STATUS.failed);
       setEmailStatus({
         type: "error",
         message: errorMessage,
@@ -222,8 +261,8 @@ export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
                   value={email}
                 />
                 <SideButton
-                  active={isEmailEntered}
-                  disabled={isSendingEmail}
+                  active={isSendEmailButtonActive}
+                  disabled={!canSendEmailCode}
                   onPress={handleSendEmailCode}
                 >
                   {isSendingEmail ? "전송" : "인증"}
@@ -241,8 +280,8 @@ export function FindEmailPasswordScreen({ onBackPress, onConfirmPress }) {
                   value={verificationCode}
                 />
                 <SideButton
-                  active={isVerificationCodeEntered}
-                  disabled={isVerifyingEmail}
+                  active={isVerifyEmailButtonActive}
+                  disabled={!canVerifyEmailCode}
                   onPress={handleVerifyEmailCode}
                 >
                   {isEmailVerified ? "완료" : isVerifyingEmail ? "확인" : "확인"}

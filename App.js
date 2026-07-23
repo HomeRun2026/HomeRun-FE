@@ -55,8 +55,8 @@ function SignupRoute({ navigation }) {
   return (
     <SignupScreen
       onBackPress={() => goBackOrReset(navigation, routes.login)}
-      onNextPress={(signupForm) =>
-        navigation.navigate(routes.termsAgreement, { signupForm })
+      onNextPress={({ signupTokens }) =>
+        navigation.navigate(routes.termsAgreement, { signupTokens })
       }
     />
   );
@@ -66,8 +66,8 @@ function TermsAgreementRoute({ navigation, route }) {
   return (
     <TermsAgreementScreen
       onBackPress={() => goBackOrReset(navigation, routes.signup)}
-      onConfirmPress={() => navigation.navigate(routes.signupComplete)}
-      signupForm={route.params?.signupForm}
+      onConfirmPress={() => resetTo(navigation, routes.home)}
+      signupTokens={route.params?.signupTokens}
     />
   );
 }

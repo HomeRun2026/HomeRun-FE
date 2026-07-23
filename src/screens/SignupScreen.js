@@ -14,11 +14,43 @@ import {
 
 import { sendEmailVerificationCode } from "../../api/auth/email/send";
 import { verifyEmailCode } from "../../api/auth/email/verify";
+import { signup } from "../../api/auth/signup";
+import { extractAuthTokens } from "../../api/auth/tokens";
 import { AppScreen, Header, PrimaryButton } from "../components";
 import BackIcon from "../../assets/images/L.svg";
 import HiddenIcon from "../../assets/images/icon_password_hidden.svg";
 import VisibleIcon from "../../assets/images/icon_visible.svg";
 import { colors, layout, typography } from "../theme";
+
+const EMAIL_AUTH_STATUS = {
+  idle: "idle",
+  sending: "sending",
+  sent: "sent",
+  verifying: "verifying",
+  verified: "verified",
+  failed: "failed",
+};
+
+function getSignupErrorReason(error) {
+  const detailMessage = error?.details?.data;
+
+  if (detailMessage && typeof detailMessage === "object") {
+    const fieldMessage = Object.values(detailMessage).find(
+      (value) => typeof value === "string" && value.trim().length > 0,
+    );
+
+    if (fieldMessage) {
+      return fieldMessage;
+    }
+  }
+
+  const message =
+    error?.details?.message ??
+    error?.message ??
+    "회원가입 요청에 실패했습니다. 다시 시도해 주세요.";
+
+  return message.replace(/^\[?[A-Z]\d{3,}\]?\s*:?\s*/, "");
+}
 
 export function SignupScreen({ onBackPress, onNextPress }) {
   const { height, width } = useWindowDimensions();
@@ -31,16 +63,45 @@ export function SignupScreen({ onBackPress, onNextPress }) {
   const [verifiedEmail, setVerifiedEmail] = useState("");
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [isVerifyingEmail, setIsVerifyingEmail] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailStatus, setEmailStatus] = useState(null);
+  const [signupErrorMessage, setSignupErrorMessage] = useState("");
+  const [emailAuthStatus, setEmailAuthStatus] = useState(
+    EMAIL_AUTH_STATUS.idle,
+  );
 
   const trimmedEmail = email.trim();
   const trimmedNickname = nickname.trim();
   const trimmedVerificationCode = verificationCode.trim();
   const isEmailVerified = Boolean(verifiedEmail && verifiedEmail === trimmedEmail);
+  const isEmailEntered = trimmedEmail.length > 0;
+  const isVerificationCodeEntered = trimmedVerificationCode.length > 0;
+  const canSendEmailCode =
+    isEmailEntered &&
+    !isSendingEmail &&
+    !isVerifyingEmail &&
+    emailAuthStatus !== EMAIL_AUTH_STATUS.sent &&
+    !isEmailVerified;
+  const canVerifyEmailCode =
+    isVerificationCodeEntered &&
+    emailAuthStatus === EMAIL_AUTH_STATUS.sent &&
+    !isSendingEmail &&
+    !isVerifyingEmail &&
+    !isEmailVerified;
+  const isSendEmailButtonActive =
+    isEmailEntered &&
+    (canSendEmailCode ||
+      isSendingEmail ||
+      emailAuthStatus === EMAIL_AUTH_STATUS.sent ||
+      isEmailVerified);
+  const isVerifyEmailButtonActive =
+    canVerifyEmailCode || isVerifyingEmail || isEmailVerified;
 
   const handleEmailChange = (value) => {
     setEmail(value);
     setEmailStatus(null);
+    setSignupErrorMessage("");
+    setEmailAuthStatus(EMAIL_AUTH_STATUS.idle);
 
     if (verifiedEmail && value.trim() !== verifiedEmail) {
       setVerifiedEmail("");
@@ -48,6 +109,8 @@ export function SignupScreen({ onBackPress, onNextPress }) {
   };
 
   const handleSendEmailCode = async () => {
+    setSignupErrorMessage("");
+
     if (!trimmedEmail) {
       setEmailStatus({
         type: "error",
@@ -61,11 +124,13 @@ export function SignupScreen({ onBackPress, onNextPress }) {
       type: "info",
       message: "인증번호를 요청하고 있습니다.",
     });
+    setEmailAuthStatus(EMAIL_AUTH_STATUS.sending);
     setIsSendingEmail(true);
 
     try {
       await sendEmailVerificationCode({ email: trimmedEmail });
       setVerifiedEmail("");
+      setEmailAuthStatus(EMAIL_AUTH_STATUS.sent);
       setEmailStatus({
         type: "success",
         message: "인증번호를 이메일로 보냈습니다.",
@@ -79,6 +144,7 @@ export function SignupScreen({ onBackPress, onNextPress }) {
         type: "error",
         message: errorMessage,
       });
+      setEmailAuthStatus(EMAIL_AUTH_STATUS.idle);
       Alert.alert(
         "회원가입",
         errorMessage,
@@ -89,6 +155,8 @@ export function SignupScreen({ onBackPress, onNextPress }) {
   };
 
   const handleVerifyEmailCode = async () => {
+    setSignupErrorMessage("");
+
     if (!trimmedEmail || !trimmedVerificationCode) {
       setEmailStatus({
         type: "error",
@@ -102,6 +170,7 @@ export function SignupScreen({ onBackPress, onNextPress }) {
       type: "info",
       message: "인증번호를 확인하고 있습니다.",
     });
+    setEmailAuthStatus(EMAIL_AUTH_STATUS.verifying);
     setIsVerifyingEmail(true);
 
     try {
@@ -110,6 +179,7 @@ export function SignupScreen({ onBackPress, onNextPress }) {
         code: trimmedVerificationCode,
       });
       setVerifiedEmail(trimmedEmail);
+      setEmailAuthStatus(EMAIL_AUTH_STATUS.verified);
       setEmailStatus({
         type: "success",
         message: "이메일 인증이 완료되었습니다.",
@@ -120,6 +190,7 @@ export function SignupScreen({ onBackPress, onNextPress }) {
         error?.message ?? "인증번호 확인에 실패했습니다. 다시 시도해 주세요.";
 
       setVerifiedEmail("");
+      setEmailAuthStatus(EMAIL_AUTH_STATUS.failed);
       setEmailStatus({
         type: "error",
         message: errorMessage,
@@ -134,45 +205,66 @@ export function SignupScreen({ onBackPress, onNextPress }) {
   };
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
-  const isEmailEntered = email.trim().length > 0;
-  const isVerificationCodeEntered = verificationCode.trim().length > 0;
   const availableContentWidth =
     frameWidth - layout.screenMargin * 2;
   const shouldShowInputPreview = availableContentWidth < 340;
   const shouldUseInlineFooter = frameWidth > height || height < 640;
 
-  const handleNextPress = () => {
+  const handleNextPress = async () => {
+    setSignupErrorMessage("");
+
     if (!trimmedEmail || !password || !passwordConfirm || !trimmedNickname) {
-      Alert.alert("회원가입", "필수 정보를 모두 입력해 주세요.");
+      setSignupErrorMessage("필수 정보를 모두 입력해 주세요.");
       return;
     }
 
     if (!isEmailVerified) {
-      Alert.alert("회원가입", "이메일 인증을 완료해 주세요.");
+      setSignupErrorMessage("이메일 인증을 완료해 주세요.");
       return;
     }
 
     if (password !== passwordConfirm) {
-      Alert.alert("회원가입", "비밀번호가 일치하지 않습니다.");
+      setSignupErrorMessage("비밀번호가 일치하지 않습니다.");
       return;
     }
 
-    onNextPress?.({
-      email: trimmedEmail,
-      nickname: trimmedNickname,
-      password,
-      passwordConfirm,
-    });
+    setIsSubmitting(true);
+
+    try {
+      const signupResponse = await signup({
+        email: trimmedEmail,
+        nickname: trimmedNickname,
+        password,
+        passwordConfirm,
+      });
+      const signupTokens = extractAuthTokens(signupResponse);
+
+      if (!signupTokens.accessToken) {
+        throw new Error("회원가입 인증 토큰을 받을 수 없습니다.");
+      }
+
+      onNextPress?.({ signupTokens });
+    } catch (error) {
+      setSignupErrorMessage(getSignupErrorReason(error));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const nextButton = (
-    <PrimaryButton
-      onPress={handleNextPress}
-      style={styles.nextButton}
-      textStyle={styles.nextText}
-    >
-      다음
-    </PrimaryButton>
+    <>
+      {signupErrorMessage ? (
+        <Text style={styles.signupError}>{signupErrorMessage}</Text>
+      ) : null}
+      <PrimaryButton
+        disabled={isSubmitting}
+        onPress={handleNextPress}
+        style={styles.nextButton}
+        textStyle={styles.nextText}
+      >
+        다음
+      </PrimaryButton>
+    </>
   );
 
   return (
@@ -211,8 +303,8 @@ export function SignupScreen({ onBackPress, onNextPress }) {
                   value={email}
                 />
                 <SideButton
-                  active={isEmailEntered}
-                  disabled={isSendingEmail}
+                  active={isSendEmailButtonActive}
+                  disabled={!canSendEmailCode}
                   onPress={handleSendEmailCode}
                 >
                   {isSendingEmail ? "전송" : "인증"}
@@ -226,14 +318,17 @@ export function SignupScreen({ onBackPress, onNextPress }) {
               <View style={styles.row}>
                 <SignupInput
                   keyboardType="number-pad"
-                  onChangeText={setVerificationCode}
+                  onChangeText={(value) => {
+                    setVerificationCode(value);
+                    setSignupErrorMessage("");
+                  }}
                   placeholder="인증번호 입력 *"
                   style={styles.emailInput}
                   value={verificationCode}
                 />
                 <SideButton
-                  active={isVerificationCodeEntered}
-                  disabled={isVerifyingEmail}
+                  active={isVerifyEmailButtonActive}
+                  disabled={!canVerifyEmailCode}
                   onPress={handleVerifyEmailCode}
                 >
                   {isEmailVerified ? "완료" : isVerifyingEmail ? "확인" : "확인"}
@@ -261,7 +356,10 @@ export function SignupScreen({ onBackPress, onNextPress }) {
               <PasswordInput
                 autoCapitalize="none"
                 autoComplete="password"
-                onChangeText={setPassword}
+                onChangeText={(value) => {
+                  setPassword(value);
+                  setSignupErrorMessage("");
+                }}
                 onToggleVisibility={() => setShowPassword((value) => !value)}
                 placeholder="비밀번호 *"
                 secureTextEntry={!showPassword}
@@ -271,7 +369,10 @@ export function SignupScreen({ onBackPress, onNextPress }) {
               <PasswordInput
                 autoCapitalize="none"
                 autoComplete="password"
-                onChangeText={setPasswordConfirm}
+                onChangeText={(value) => {
+                  setPasswordConfirm(value);
+                  setSignupErrorMessage("");
+                }}
                 onToggleVisibility={() =>
                   setShowPasswordConfirm((value) => !value)
                 }
@@ -287,7 +388,10 @@ export function SignupScreen({ onBackPress, onNextPress }) {
             </Text>
 
             <SignupInput
-              onChangeText={setNickname}
+              onChangeText={(value) => {
+                setNickname(value);
+                setSignupErrorMessage("");
+              }}
               placeholder="닉네임 *"
               style={[styles.stretchInput, styles.nicknameInput]}
               value={nickname}
@@ -551,6 +655,12 @@ const styles = StyleSheet.create({
     gap: 10,
     borderRadius: 8,
     backgroundColor: colors.main,
+  },
+  signupError: {
+    alignSelf: "stretch",
+    marginBottom: 8,
+    ...typography.caption01M,
+    color: colors.point,
   },
   nextText: {
     ...typography.body01Sb,

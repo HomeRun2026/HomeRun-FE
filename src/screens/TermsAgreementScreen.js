@@ -7,7 +7,6 @@ import CheckboxIcon from "../../assets/images/Checkbox.svg";
 import DownIcon from "../../assets/images/Down.svg";
 import UpIcon from "../../assets/images/Up.svg";
 import { agreeToSignupTerms } from "../../api/auth/consent";
-import { signup } from "../../api/auth/signup";
 import { extractAuthTokens, setAuthTokens } from "../../api/auth/tokens";
 import { AppScreen, Header, PrimaryButton } from "../components";
 import { colors, layout, typography } from "../theme";
@@ -30,7 +29,7 @@ const TERMS = [
 export function TermsAgreementScreen({
   onBackPress,
   onConfirmPress,
-  signupForm,
+  signupTokens,
 }) {
   const [checkedMap, setCheckedMap] = useState({
     service: false,
@@ -81,7 +80,7 @@ export function TermsAgreementScreen({
       return;
     }
 
-    if (!signupForm) {
+    if (!signupTokens?.accessToken) {
       Alert.alert("회원가입", "회원가입 정보를 다시 입력해 주세요.");
       onBackPress?.();
       return;
@@ -90,20 +89,11 @@ export function TermsAgreementScreen({
     setIsSubmitting(true);
 
     try {
-      const signupResponse = await signup({
-        email: signupForm.email,
-        nickname: signupForm.nickname,
-        password: signupForm.password,
-        passwordConfirm: signupForm.passwordConfirm,
-      });
-      const accessToken = signupResponse?.data?.accessToken;
-
       const consentResponse = await agreeToSignupTerms({
         serviceTermsAgreement: checkedMap.service,
         serviceInfoAgreement: checkedMap.privacy,
-        accessToken,
+        accessToken: signupTokens.accessToken,
       });
-      const signupTokens = extractAuthTokens(signupResponse);
       const consentTokens = extractAuthTokens(consentResponse);
 
       setAuthTokens({
@@ -155,20 +145,20 @@ export function TermsAgreementScreen({
                         accessibilityState={{ checked }}
                         hitSlop={8}
                         onPress={() => toggleCheck(term.id)}
-                        style={styles.checkPressable}
+                        style={styles.termToggleButton}
                       >
                         <CheckIcon height={16} width={16} />
+                        <Text style={styles.termTitle}>{term.title}</Text>
                       </Pressable>
 
                       <Pressable
                         accessibilityRole="button"
                         accessibilityLabel={`${term.title} ${expanded ? "닫기" : "펼치기"}`}
                         onPress={() => toggleExpand(term.id)}
-                        style={styles.termRowButton}
+                        style={styles.expandButton}
                       >
-                        <Text style={styles.termTitle}>{term.title}</Text>
                         <View style={styles.expandIcon}>
-                          <ExpandIcon height={4} width={9.333} />
+                          <ExpandIcon height={16} width={16} />
                         </View>
                       </Pressable>
                     </View>
@@ -279,15 +269,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  termRowButton: {
+  termToggleButton: {
     flex: 1,
     minHeight: 36,
-    marginLeft: 10,
     flexDirection: "row",
     alignItems: "center",
+    gap: 10,
   },
-  checkPressable: {
-    padding: 2,
+  expandButton: {
+    width: 36,
+    height: 36,
+    alignItems: "center",
+    justifyContent: "center",
   },
   check: {
     width: 24,
